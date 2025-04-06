@@ -1,10 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 
-const theme = ref('light')
+const theme = ref(localStorage.getItem('theme') ?? 'light')
 
 function onClick() {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
+  localStorage.setItem('theme', theme.value)
 }
 </script>
 
@@ -21,6 +22,7 @@ function onClick() {
         <v-btn
           :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
           variant="elavated"
+          color="purple-darken-3"
           slim
           @click="onClick"
         ></v-btn>
@@ -38,8 +40,8 @@ function onClick() {
         elevation="24"
         border
         app
-        >2024 - CSE Reviewer</v-footer
-      >
+        >Copyright © 2025 - CSE REVIEWER | All Rights Reserved
+      </v-footer>
     </v-app>
   </v-responsive>
 </template>

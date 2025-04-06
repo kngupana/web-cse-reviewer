@@ -23,7 +23,9 @@ const { mobile } = useDisplay()
               <v-divider class="my-5"> </v-divider>
               <h5 class="text-center">
                 Already have an account?
-                <RouterLink class="text-primary" to="/">Click here to Login</RouterLink>
+                <RouterLink color="purple-darken-3 font-weight-black" to="/"
+                  >Click here to Login</RouterLink
+                >
               </h5>
             </v-card-text>
           </v-card>
