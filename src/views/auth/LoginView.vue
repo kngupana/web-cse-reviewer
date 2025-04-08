@@ -21,6 +21,14 @@ const { mobile } = useDisplay()
             <v-card-text class="bg-surface-light pt-4">
               <v-divider class="my-5"></v-divider>
               <LoginForm></LoginForm>
+              <br />
+              <div class="remember-password">
+                <input type="checkbox" id="rememberPassword" />
+                <label for="rememberPassword"> Remember Password</label>
+                <div class="text-right">
+                  <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+              </div>
               <v-divider class="my-5"> </v-divider>
               <h5 class="text-center">
                 Don't have account?
