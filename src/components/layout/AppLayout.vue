@@ -20,10 +20,10 @@ function onClick() {
         <v-spacer></v-spacer>
 
         <v-btn
+          class="floating-theme-btn"
           :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
-          variant="elavated"
           color="purple-darken-3"
-          slim
+          elevation="6"
           @click="onClick"
         ></v-btn>
       </v-app-bar>
