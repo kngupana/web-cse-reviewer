@@ -6,6 +6,8 @@ import {
   confirmedValidator,
 } from '@/utils/validators'
 import { ref } from 'vue'
+import { supabase, formActionDefault } from '@/utils/supabase.js'
+import AlertNotification from '@/components/common/AlertNotification.vue'
 
 const formDataDefault = {
   firstname: '',
@@ -18,8 +20,40 @@ const formDataDefault = {
 const formData = ref({
   ...formDataDefault,
 })
-const onSubmit = () => {
-  alert(formData.value.email)
+
+const formAction = ref({ ...formActionDefault })
+
+const isPasswordVisible = ref(false)
+const isPasswordConfirmVisible = ref(false)
+const refVForm = ref()
+
+const onSubmit = async () => {
+  formAction.value = { ...formActionDefault }
+  formAction.value.formProcess = true
+
+  const { data, error } = await supabase.auth.signUp({
+    email: formData.value.email,
+    password: formData.value.password,
+    options: {
+      data: {
+        firstname: formData.value.firstname,
+        lastname: formData.value.lastname,
+      },
+    },
+  })
+
+  if (error) {
+    console.log(error)
+    formAction.value.formErrorMessage = error.message
+    formAction.value.formStatus = error.status
+  } else if (data) {
+    console.log(data)
+    formAction.value.formSuccessMessage = 'Successfully Registered Account'
+    // You can add aditional actions here
+    refVForm.value?.reset()
+  }
+
+  formAction.value.formProcess = false
 }
 
 const onFormSubmit = () => {
@@ -27,26 +61,14 @@ const onFormSubmit = () => {
     if (valid) onSubmit()
   })
 }
-
-const isPasswordVisible = ref(false)
-const isPasswordConfirmVisible = ref(false)
-const refVForm = ref()
-
-const togglePassword = () => {
-  isPasswordVisible.value = !isPasswordVisible.value
-}
-
-const toggleConfirmPassword = () => {
-  isPasswordConfirmVisible.value = !isPasswordConfirmVisible.value
-}
-
-const submitForm = () => {
-  // Add form handling logic here
-  console.log('Form submitted')
-}
 </script>
 
 <template>
+  <AlertNotification
+    :form-success-message="formAction.formSuccessMessage"
+    :form-error-message="formAction.formErrorMessage"
+  ></AlertNotification>
+
   <v-container class="py-6" max-width="500px">
     <v-card elevation="10" class="pa-6 rounded-xl">
       <v-card-title class="text-h5 font-weight-bold text-center pb-4">
@@ -120,12 +142,6 @@ const submitForm = () => {
             />
           </v-col>
         </v-row>
-        <v-checkbox
-          v-model="acceptTerms"
-          label="I accept the Terms and Conditions"
-          :rules="[(v) => !!v || 'You must accept the terms']"
-          required
-        />
 
         <v-btn
           class="mt-4"
@@ -133,6 +149,8 @@ const submitForm = () => {
           block
           color="purple-darken-3"
           prepend-icon="mdi-account-plus"
+          :disabled="formAction.formProcess"
+          :loading="formAction.formProcess"
         >
           Register
         </v-btn>
