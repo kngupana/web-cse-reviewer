@@ -19,11 +19,7 @@ const { mobile } = useDisplay()
             </v-card-title>
 
             <RegisterForm></RegisterForm>
-            <v-checkbox
-              v-model="accepted"
-              label="I accept the Terms and Conditions"
-              :rules="[(v) => !!v || 'You must accept the terms']"
-            ></v-checkbox>
+
             <v-card-text class="bg-surface-light pt-4">
               <v-divider class="my-5"> </v-divider>
               <h5 class="text-center">
