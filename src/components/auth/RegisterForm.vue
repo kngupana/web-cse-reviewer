@@ -1,16 +1,43 @@
 <script setup>
+import {
+  requiredValidator,
+  emailValidator,
+  passwordValidator,
+  confirmedValidator,
+} from '@/utils/validators'
 import { ref } from 'vue'
 
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
-const password = ref('')
+const formDataDefault = {
+  firstname: '',
+  lastname: '',
+  email: '',
+  password: '',
+  password_confirmation: '',
+}
+
+const formData = ref({
+  ...formDataDefault,
+})
+const onSubmit = () => {
+  alert(formData.value.email)
+}
+
+const onFormSubmit = () => {
+  refVForm.value?.validate().then(({ valid }) => {
+    if (valid) onSubmit()
+  })
+}
+
+const isPasswordVisible = ref(false)
+const isPasswordConfirmVisible = ref(false)
+const refVForm = ref()
 
 const togglePassword = () => {
-  showPassword.value = !showPassword.value
+  isPasswordVisible.value = !isPasswordVisible.value
 }
 
 const toggleConfirmPassword = () => {
-  showConfirmPassword.value = !showConfirmPassword.value
+  isPasswordConfirmVisible.value = !isPasswordConfirmVisible.value
 }
 
 const submitForm = () => {
@@ -26,39 +53,45 @@ const submitForm = () => {
         Create an Account
       </v-card-title>
 
-      <v-form fast-fail @submit.prevent="submitForm">
+      <v-form ref="refVForm" @submit.prevent="onFormSubmit">
         <v-row dense>
           <v-col cols="12" sm="6">
             <v-text-field
+              v-model="formData.firstname"
               label="First Name"
               variant="outlined"
               prepend-icon="mdi-account"
               required
+              :rules="[requiredValidator]"
             />
           </v-col>
 
           <v-col cols="12" sm="6">
             <v-text-field
+              v-model="formData.lastname"
               label="Last Name"
               variant="outlined"
               prepend-icon="mdi-account"
               required
+              :rules="[requiredValidator]"
             />
           </v-col>
 
           <v-col cols="12">
             <v-text-field
+              v-model="formData.email"
               label="Email"
               variant="outlined"
               prepend-icon="mdi-email"
               type="email"
               required
+              :rules="[requiredValidator, emailValidator]"
             />
           </v-col>
 
           <v-col cols="12">
             <v-text-field
-              v-model="password"
+              v-model="formData.password"
               :type="showPassword ? 'text' : 'password'"
               label="Password"
               variant="outlined"
@@ -66,11 +99,13 @@ const submitForm = () => {
               :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
               @click:append="togglePassword"
               required
+              :rules="[requiredValidator, passwordValidator]"
             />
           </v-col>
 
           <v-col cols="12">
             <v-text-field
+              v-model="formData.password_confirmation"
               :type="showConfirmPassword ? 'text' : 'password'"
               label="Confirm Password"
               variant="outlined"
@@ -78,6 +113,10 @@ const submitForm = () => {
               :append-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
               @click:append="toggleConfirmPassword"
               required
+              :rules="[
+                requiredValidator,
+                confirmedValidator(formData.password_confirmation, formData.password),
+              ]"
             />
           </v-col>
         </v-row>

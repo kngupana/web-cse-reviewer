@@ -1,15 +1,27 @@
 <script setup>
+import { requiredValidator, emailValidator } from '@/utils/validators'
 import { ref } from 'vue'
 
-const showPassword = ref(false)
+const isPasswordVisible = ref(false)
+const refVForm = ref()
 
-const togglePassword = () => {
-  showPassword.value = !showPassword.value
+const formDataDefault = {
+  email: '',
+  password: '',
 }
 
-const handleLogin = () => {
-  // Your login logic goes here
-  console.log('Logging in...')
+const formData = ref({
+  ...formDataDefault,
+})
+
+const onSubmit = () => {
+  //alert(formData.value.email)
+}
+
+const onFormSubmit = () => {
+  refVForm.value?.validate().then(({ valid }) => {
+    if (valid) onSubmit()
+  })
 }
 </script>
 
@@ -18,26 +30,22 @@ const handleLogin = () => {
     <v-card elevation="10" class="pa-6 rounded-xl">
       <v-card-title class="text-h5 font-weight-bold text-center mb-4"> Welcome Back </v-card-title>
 
-      <v-form fast-fail @submit.prevent="handleLogin">
+      <v-form ref="refVForm" @submit.prevent="onFormSubmit">
         <v-text-field
-          label="Email Address"
-          prepend-icon="mdi-email"
-          type="email"
-          variant="outlined"
-          density="comfortable"
-          required
+          v-model="formData.email"
+          label="Email"
+          prepend-inner-icon="mdi-email"
+          :rules="[requiredValidator, emailValidator]"
         />
 
         <v-text-field
-          v-model="password"
-          :type="showPassword ? 'text' : 'password'"
+          v-model="formData.password"
+          prepend-inner-icon="mdi-lock"
           label="Password"
-          prepend-icon="mdi-lock"
-          :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-          @click:append="togglePassword"
-          variant="outlined"
-          density="comfortable"
-          required
+          :type="isPasswordVisible ? 'text' : 'password'"
+          :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
+          @click:append-inner="isPasswordVisible = !isPasswordVisible"
+          :rules="[requiredValidator]"
         />
 
         <v-btn type="submit" block color="purple-darken-3" class="mt-4" prepend-icon="mdi-login">
