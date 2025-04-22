@@ -2,7 +2,7 @@
   <v-navigation-drawer
     :model-value="isDrawerVisible"
     app
-    color="indigo-darken-4"
+    color="#4B0082"
     dark
   >
     <v-list dense nav>
