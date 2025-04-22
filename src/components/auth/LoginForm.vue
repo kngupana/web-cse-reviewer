@@ -1,9 +1,12 @@
 <script setup>
 import { requiredValidator, emailValidator } from '@/utils/validators'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { supabase } from '@/utils/supabase'
 
 const isPasswordVisible = ref(false)
 const refVForm = ref()
+const router = useRouter()
 
 const formDataDefault = {
   email: '',
@@ -14,8 +17,21 @@ const formData = ref({
   ...formDataDefault,
 })
 
-const onSubmit = () => {
-  //alert(formData.value.email)
+const errorMsg = ref('')  // For displaying login errors
+
+const onSubmit = async () => {
+  const { email, password } = formData.value
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
+
+  if (error) {
+    errorMsg.value = error.message
+  } else {
+    // Redirect to dashboard after successful login
+    router.push('/dashboard')  // Ensure you have a route to /dashboard
+  }
 }
 
 const onFormSubmit = () => {
@@ -54,6 +70,8 @@ const onFormSubmit = () => {
         <div class="text-right">
           <a href="#" class="forgot-password">Forgot password?</a>
         </div>
+
+        <p v-if="errorMsg" class="text-red mt-2">{{ errorMsg }}</p>  <!-- Error message display -->
       </v-form>
 
       <v-divider class="my-4" />
