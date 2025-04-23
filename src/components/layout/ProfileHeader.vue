@@ -1,66 +1,93 @@
-<template>
-  <v-menu offset-y transition="slide-y-transition">
-    <template #activator="{ props }">
-      <v-btn v-bind="props" class="d-flex align-center gap-2" variant="text">
-        <v-avatar size="36">
-          <v-img :src="user?.avatar_url || defaultAvatar" />
-        </v-avatar>
-        <span class="font-weight-medium">{{ user?.full_name || 'Loading...' }}</span>
-        <v-icon>mdi-chevron-down</v-icon>
-      </v-btn>
-    </template>
-
-    <v-card class="pa-4" width="300">
-      <v-row no-gutters class="mb-4">
-        <v-col cols="3">
-          <v-avatar size="48">
-            <v-img :src="user?.avatar_url || defaultAvatar" />
-          </v-avatar>
-        </v-col>
-        <v-col cols="9">
-          <div class="font-weight-bold">{{ user?.full_name }}</div>
-          <div class="text-caption text-truncate">{{ user?.email }}</div>
-        </v-col>
-      </v-row>
-
-      <v-divider class="mb-2" />
-
-      <v-btn block color="primary" @click="logout" variant="tonal">
-        <v-icon start>mdi-logout</v-icon>
-        Logout
-      </v-btn>
-    </v-card>
-  </v-menu>
-</template>
-
 <script setup>
-import { onMounted, ref } from 'vue'
+import { supabase, formActionDefault } from '@/utils/supabase'
+import { getAvatarText} from '@/utils/helpers'
 import { useRouter } from 'vue-router'
-import { supabase } from '@/utils/supabase'
+import { onMounted, ref } from 'vue'
+
+// Utilize pre-defined vue functions
 const router = useRouter()
 
-const user = ref(null)
-const defaultAvatar = 'https://i.pravatar.cc/150?img=3'
-
-onMounted(async () => {
-  const { data, error } = await supabase.auth.getUser()
-  if (error) {
-    console.error('Failed to get user:', error)
-    return
-  }
-
-  const sessionUser = data?.user
-  if (sessionUser) {
-    user.value = {
-      email: sessionUser.email,
-      full_name: sessionUser.user_metadata?.full_name || 'Anonymous',
-      avatar_url: sessionUser.user_metadata?.avatar_url || '',
-    }
-  }
+// Load Variables
+const userData = ref({
+  initials: '',
+  email: '',
+  fullname: ''
+})
+const formAction = ref ({
+  ...formActionDefault
 })
 
-const logout = async () => {
-  await supabase.auth.signOut()
-  router.push('/login')
+//Logout Functionality
+const onLogout = async () => {
+  formAction.value = {...formActionDefault}
+  formAction.value.formProcess = true
+
+  const { error } = await supabase.auth.signOut()
+  if (error) {
+    console.error('Error during logout:', error)
+   return
+  }
+
+  formAction.value.formProcess = false
+  // Redirect to homepage which is ang login view
+  router.replace('/')
 }
+//Getting User Information Functionality
+const getUser = async() => {
+  const {
+    data: {
+      user: { user_metadata: metadata}
+    }
+  } = await supabase.auth.getUser()
+
+  userData.value.email = metadata.email
+  userData.value.fullname = metadata.firstname + ' ' + metadata.lastname
+  userData.value.initials = getAvatarText(userData.value.fullname)
+
+}
+
+//Load functions during component rendering
+onMounted(() => {
+  getUser()
+})
+
 </script>
+
+<template>
+      <v-menu min-width="200px" rounded>
+        <template #activator="{ props }">
+          <v-btn icon v-bind="props" class="ml-2">
+            <v-avatar color="#3F0071" size="large">
+              <span class="text-h5">{{ userData.initials }}</span>
+            </v-avatar>
+          </v-btn>
+        </template>
+
+
+        <v-card class="mt-1">
+          <v-card-text>
+            <v-list>
+            <v-list-item :subtitle="userData.email" :title="userData.fullname">
+              <template #prepend>
+              <v-avatar color="#3F0071" size="large">
+                 <span class="text-h5">{{ userData.initials }}</span>
+              </v-avatar>
+             </template>
+          </v-list-item>
+        </v-list>
+
+              <v-divider class="my-3"></v-divider>
+
+              <v-btn
+                prepend-icon="mdi-logout"
+                variant="plain"
+                @click="onLogout"
+                :loading="formAction.formProcess"
+                :disabled="formAction.formProcess"
+              >
+                Logout
+              </v-btn>
+          </v-card-text>
+        </v-card>
+      </v-menu>
+</template>

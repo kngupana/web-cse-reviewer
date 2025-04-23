@@ -37,7 +37,7 @@ onMounted(() => {
     <v-app :theme="theme">
       <v-app-bar
         class="px-3"
-        :color="theme === 'light' ? 'grey-lighten-1' : 'grey-darken-3'"
+        :style="{ backgroundColor: theme === 'light' ? '#A084E8' : '#4B0082' }"
         border
       >
       <v-app-bar-nav-icon
@@ -70,7 +70,7 @@ onMounted(() => {
 
       <v-footer
         class="font-weight-bold"
-        :color="theme === 'light' ? 'grey-lighten-1' : 'grey-darken-3'"
+        :style="{ backgroundColor: theme === 'light' ? '#A084E8' : '#4B0082' }"
         elevation="24"
         border
         app
