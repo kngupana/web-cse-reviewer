@@ -3,40 +3,34 @@ import { requiredValidator, emailValidator } from '@/utils/validators'
 import AlertNotification from '@/components/common/AlertNotification.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { supabase, formActionDefault} from '@/utils/supabase'
+import { supabase, formActionDefault } from '@/utils/supabase'
 
-// Utilize pre-defined vue functions
+// For routing
 const router = useRouter()
 
+// Emit to parent
+const emit = defineEmits(['update:loading'])
 
-// Load Variables
+// Default form data
 const formDataDefault = {
   email: '',
   password: '',
 }
 
-const formData = ref({
-  ...formDataDefault,
-})
-
-const formAction = ref({
-  ...formActionDefault
- })
-
- const isPasswordVisible = ref(false)
+const formData = ref({ ...formDataDefault })
+const formAction = ref({ ...formActionDefault })
+const isPasswordVisible = ref(false)
 const refVForm = ref()
 
-//const errorMsg = ref('')  // For displaying login errors
-
+// Submit logic
 const onSubmit = async () => {
- //Reset Form Action Utils
- formAction.value = { ...formActionDefault }
-  // Turn On Processing
-  formAction.value.formProcess = true
+  formAction.value = { ...formActionDefault }
+
+  emit('update:loading', true) // Show loading in parent
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email: formData.value.email,
-    password: formData.value.password
+    password: formData.value.password,
   })
 
   if (error) {
@@ -47,11 +41,8 @@ const onSubmit = async () => {
     router.replace('/system/dashboard')
   }
 
-  // Reset Form
   refVForm.value?.reset()
-  // Turn off processing
-  formAction.value.formProcess = false
-
+  emit('update:loading', false) // Hide loading
 }
 
 const onFormSubmit = () => {
@@ -65,13 +56,15 @@ const onFormSubmit = () => {
   <AlertNotification
     :form-success-message="formAction.formSuccessMessage"
     :form-error-message="formAction.formErrorMessage"
-></AlertNotification>
+  />
 
   <v-container class="py-10" max-width="450px">
     <v-card elevation="10" class="pa-6 rounded-xl">
-      <v-card-title class="text-h5 font-weight-bold text-center mb-4"> Welcome Back </v-card-title>
+      <v-card-title class="text-h5 font-weight-bold text-center mb-4">
+        Welcome Back
+      </v-card-title>
 
-      <v-form class= "mt-5" ref="refVForm" @submit.prevent="onFormSubmit">
+      <v-form class="mt-5" ref="refVForm" @submit.prevent="onFormSubmit">
         <v-text-field
           v-model="formData.email"
           label="Email"
@@ -89,15 +82,19 @@ const onFormSubmit = () => {
           :rules="[requiredValidator]"
         />
 
-        <v-btn type="submit" block color="purple-darken-3" class="mt-4" prepend-icon="mdi-login">
+        <v-btn
+          type="submit"
+          block
+          color="purple-darken-3"
+          class="mt-4"
+          prepend-icon="mdi-login"
+        >
           Login
         </v-btn>
+
         <div class="text-right">
           <a href="#" class="forgot-password">Forgot password?</a>
         </div>
-
-        <p v-if="errorMsg" class="text-red mt-2">{{ errorMsg }}</p>
-        <!-- Error message display -->
       </v-form>
 
       <v-divider class="my-4" />
