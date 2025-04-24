@@ -9,17 +9,12 @@
       <v-list-item
         prepend-icon="mdi-view-dashboard"
         title="Dashboard"
-        to="/"
+        to="/system/dashboard"
       />
       <v-list-item
         prepend-icon="mdi-book-open-page-variant"
         title="Reviewer"
         to="/reviewer"
-      />
-      <v-list-item
-        prepend-icon="mdi-emoticon-outline"
-        title="Reactions"
-        to="/reactions"
       />
       <v-list-item
         prepend-icon="mdi-account-cog"
