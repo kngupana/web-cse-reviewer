@@ -32,6 +32,7 @@ const onLogout = async () => {
   // Redirect to homepage which is ang login view
   router.replace('/')
 }
+
 //Getting User Information Functionality
 const getUser = async() => {
   const {

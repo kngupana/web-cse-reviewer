@@ -24,4 +24,5 @@ export const isAuthenticated = async () => {
   }
 
   return !!data.session
+
 }
