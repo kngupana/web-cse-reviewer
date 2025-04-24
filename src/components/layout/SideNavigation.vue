@@ -5,21 +5,41 @@
     color="#4B0082"
     dark
   >
+    <!-- Navigation List -->
     <v-list dense nav>
+      <!-- Dashboard Link -->
       <v-list-item
         prepend-icon="mdi-view-dashboard"
         title="Dashboard"
         to="/dashboard"
       />
+
+      <!-- Reviewer Upload Link -->
       <v-list-item
-        prepend-icon="mdi-book-open-page-variant"
-        title="Reviewer"
-        to="/reviewer"
+        prepend-icon="mdi-upload"
+        title="Upload Reviewer"
+        to="/upload"
       />
+
       <v-list-item
-        prepend-icon="mdi-account-cog"
+        prepend-icon="mdi-file-document"
+        title="All Reviewers"
+        to="/reviewers"
+      />
+
+      <!-- Profile Link -->
+      <v-divider class="my-4"></v-divider>
+      <v-list-item
+        prepend-icon="mdi-account"
+        title="Profile"
+        to="/profile"
+      />
+
+      <!-- Account Settings Link -->
+      <v-list-item
+        prepend-icon="mdi-cogs"
         title="Account Settings"
-        to="/settings"
+        to="/account-settings"
       />
     </v-list>
   </v-navigation-drawer>
@@ -30,3 +50,7 @@ defineProps({
   isDrawerVisible: Boolean
 })
 </script>
+
+<style scoped>
+/* Optional: You can customize the side navigation styles here */
+</style>
