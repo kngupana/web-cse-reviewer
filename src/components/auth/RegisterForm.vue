@@ -65,7 +65,7 @@ const onSubmit = async () => {
     formAction.value.formStatus = error.status
   } else if (data) {
     formAction.value.formSuccessMessage = 'Successfully Registered Account'
-    router.replace('/system/dashboard')
+    router.replace('/dashboard')
   }
 
  // Reset Form
