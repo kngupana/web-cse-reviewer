@@ -9,7 +9,7 @@
       <v-list-item
         prepend-icon="mdi-view-dashboard"
         title="Dashboard"
-        to="/system/dashboard"
+        to="/dashboard"
       />
       <v-list-item
         prepend-icon="mdi-book-open-page-variant"
