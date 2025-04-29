@@ -6,6 +6,7 @@ import { getUserInformation, isAuthenticated } from '@/utils/supabase'
 import ForbiddenView from '@/views/errors/ForbiddenView.vue'
 import NotFoundView from '@/views/errors/NotFoundView.vue'
 import UploadReviewerView from '@/views/auth/system/UploadReviewerView.vue'
+import AccountSettingsView from '@/views/auth/system/AccountSettingsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,6 +41,12 @@ const router = createRouter({
       name: 'uploadrivewer',
       component: UploadReviewerView,
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: AccountSettingsView,
+      meta: { requiresAuth: true, isDefault: true }
     },
 
     // Error Pages
