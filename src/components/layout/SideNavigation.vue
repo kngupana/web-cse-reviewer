@@ -21,7 +21,7 @@
 
       <RouterLink>
         <!-- Account Settings Link -->
-        <v-list-item prepend-icon="mdi-cogs" title="Account Settings" to="/account-settings"
+        <v-list-item prepend-icon="mdi-cogs" title="Account Settings" to="/settings"
       /></RouterLink>
     </v-list>
   </v-navigation-drawer>
