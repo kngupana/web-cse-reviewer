@@ -1,5 +1,4 @@
 <script setup>
-import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref } from 'vue'
 
 // Mock database (replace with real API later)
@@ -65,6 +64,7 @@ function dislikeReviewer(id) {
 </script>
 
 <template>
+
   <v-container fluid class="py-6">
     <!-- Upload Section -->
     <v-card class="pa-6 mb-10 hover:shadow-lg transition-all">
