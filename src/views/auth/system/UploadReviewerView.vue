@@ -1,6 +1,9 @@
 <script setup>
+import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref } from 'vue'
+import VueApexCharts from 'vue3-apexcharts'
+import { useRouter } from 'vue-router'
 
 // Side Navigation control
 const isDrawerVisible = ref(true)
@@ -79,10 +82,19 @@ function deleteReviewer(id) {
 </script>
 
 <template>
-  <v-container fluid class="py-6">
-    <!-- Upload Section -->
-    <v-card class="pa-6 mb-10 hover:shadow-lg transition-all">
-      <h1 class="text-2xl font-bold mb-4">Upload Your Reviewer</h1>
+  <AppLayout
+    :is-with-app-bar-nav-icon="true"
+    @is-drawer-visible="isDrawerVisible = !isDrawerVisible"
+  >
+    <template #navigation>
+      <SideNavigation :is-drawer-visible="isDrawerVisible" />
+    </template>
+
+    <template #content>
+      <v-container fluid class="py-6">
+        <!-- Upload Section -->
+        <v-card class="pa-6 mb-10 hover:shadow-lg transition-all">
+          <h1 class="text-2xl font-bold mb-4">Upload Your Reviewer</h1>
 
           <v-form>
             <v-text-field
@@ -140,7 +152,6 @@ function deleteReviewer(id) {
                   View/Download
                 </v-btn>
 
-                <!-- Only show delete if uploaded by "You" -->
                 <v-btn
                   color="error"
                   variant="text"
