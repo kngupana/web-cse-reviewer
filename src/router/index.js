@@ -5,8 +5,7 @@ import DashboardView from '@/views/auth/system/DashboardView.vue'
 import { getUserInformation, isAuthenticated } from '@/utils/supabase'
 import ForbiddenView from '@/views/errors/ForbiddenView.vue'
 import NotFoundView from '@/views/errors/NotFoundView.vue'
-
-
+import UploadReviewerView from '@/views/auth/system/UploadReviewerView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,13 +19,13 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
-      meta: { requiresAuth: false }
+      meta: { requiresAuth: false },
     },
     {
       path: '/register',
       name: 'register',
       component: RegisterView,
-      meta: { requiresAuth: false }
+      meta: { requiresAuth: false },
     },
 
     // System Pages
@@ -34,69 +33,65 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
-
+    {
+      path: '/upload',
+      name: 'uploadrivewer',
+      component: UploadReviewerView,
+      meta: { requiresAuth: true },
+    },
 
     // Error Pages
     {
       path: '/forbidden',
       name: 'forbidden',
       component: ForbiddenView,
-
     },
     {
       path: '/:catchAll(.*)',
-      component: NotFoundView
-
-    }
+      component: NotFoundView,
+    },
   ],
 })
-
 
 router.beforeEach(async (to) => {
   const isLoggedIn = await isAuthenticated()
 
-
   //Redirect to appropriate page if accessing home route
   if (to.name === 'home') {
-    return isLoggedIn ? { name: 'dashboard' } : { name: 'login'}
+    return isLoggedIn ? { name: 'dashboard' } : { name: 'login' }
   }
 
   //If logged in, prevent access to login or register pages
   if (isLoggedIn && !to.meta.requiresAuth) {
     //redirect the user to the dashboard page
-    return { name: 'dashboard'}
+    return { name: 'dashboard' }
   }
 
   // If not logged in , prevent access to system pages
   if (!isLoggedIn && to.meta.requiresAuth) {
     //redirect the user to the login page
-    return { name: 'login'}
+    return { name: 'login' }
   }
 
   //Check if the user is logged in
-  if(isLoggedIn) {
+  if (isLoggedIn) {
     //Retrieve information
     const userMetadata = await getUserInformation()
     // Get the user_metadata
-  const isAdmin = userMetadata.is_admin
+    const isAdmin = userMetadata.is_admin
 
-  //remove this comment if not need;Boolean Approach
-  //const isCashier = userMetadata.is_cashier
-  //remove this comment if not need; String Approach
-  //const isCashier =userMetadata.role === 'Cashier'
-
+    //remove this comment if not need;Boolean Approach
+    //const isCashier = userMetadata.is_cashier
+    //remove this comment if not need; String Approach
+    //const isCashier =userMetadata.role === 'Cashier'
 
     // Restrict access to admin-only routes
-    if(!isAdmin && to.meta.requiresAdmin) {
-      return { name: 'forbidden'}
+    if (!isAdmin && to.meta.requiresAdmin) {
+      return { name: 'forbidden' }
+    }
   }
-  }
-
-
-
-
 })
 
 export default router
