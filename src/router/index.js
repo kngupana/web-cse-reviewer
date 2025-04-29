@@ -7,6 +7,7 @@ import ForbiddenView from '@/views/errors/ForbiddenView.vue'
 import NotFoundView from '@/views/errors/NotFoundView.vue'
 import UploadReviewerView from '@/views/auth/system/UploadReviewerView.vue'
 import AccountSettingsView from '@/views/auth/system/AccountSettingsView.vue'
+import AllReviewersView from '@/views/auth/system/AllReviewersView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,15 +39,21 @@ const router = createRouter({
     },
     {
       path: '/upload',
-      name: 'uploadrivewer',
+      name: 'uploadreviewer',
       component: UploadReviewerView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/reviewers',
+      name: 'allreviewers',
+      component: AllReviewersView,
       meta: { requiresAuth: true },
     },
     {
       path: '/settings',
       name: 'settings',
       component: AccountSettingsView,
-      meta: { requiresAuth: true, isDefault: true }
+      meta: { requiresAuth: true, isDefault: true },
     },
 
     // Error Pages
