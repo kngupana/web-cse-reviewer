@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue'
 import { useDisplay } from 'vuetify'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import ProfileHeader from '@/components/layout/ProfileHeader.vue'
+import UploadReviewerView from '@/views/auth/system/UploadReviewerView.vue'
 
 const props = defineProps(['isWithAppBarNavIcon'])
 const emit = defineEmits(['isDrawerVisible'])
@@ -41,7 +42,10 @@ onMounted(() => {
 <template>
   <v-app :theme="theme">
     <!-- Conditionally Render Side Navigation based on Login Status and Route -->
-    <SideNavigation v-if="isLoggedIn && !['/login', '/register'].includes($route.path)" :is-drawer-visible="isDrawerVisible" />
+    <SideNavigation
+      v-if="isLoggedIn && !['/login', '/register'].includes($route.path)"
+      :is-drawer-visible="isDrawerVisible"
+    />
 
     <!-- App Bar -->
     <v-app-bar

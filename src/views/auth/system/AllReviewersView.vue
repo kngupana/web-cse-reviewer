@@ -6,7 +6,7 @@ import { ref } from 'vue'
 // Side Navigation control
 const isDrawerVisible = ref(true)
 
-// Reviewers data
+// Reviewers list (this can later be replaced with real API or a store)
 const reviewers = ref([
   {
     id: 1,
@@ -26,36 +26,7 @@ const reviewers = ref([
   },
 ])
 
-const newReviewerTitle = ref('')
-const newReviewerFile = ref(null)
-
-// Handle file selection
-function handleFileChange(event) {
-  newReviewerFile.value = event.target.files[0]
-}
-
-// Upload new reviewer
-function uploadReviewer() {
-  if (!newReviewerTitle.value || !newReviewerFile.value) {
-    alert('Please provide both title and file.')
-    return
-  }
-
-  reviewers.value.push({
-    id: reviewers.value.length + 1,
-    title: newReviewerTitle.value,
-    file: newReviewerFile.value.name,
-    likes: 0,
-    dislikes: 0,
-    uploadedBy: 'You', // Replace with logged-in user name later
-  })
-
-  // Clear form
-  newReviewerTitle.value = ''
-  newReviewerFile.value = null
-}
-
-// Like and dislike
+// Like and Dislike handlers
 function likeReviewer(id) {
   const reviewer = reviewers.value.find((r) => r.id === id)
   if (reviewer) reviewer.likes++
@@ -66,16 +37,9 @@ function dislikeReviewer(id) {
   if (reviewer) reviewer.dislikes++
 }
 
-// Download reviewer
+// Download handler
 function downloadReviewer(fileName) {
   alert(`Downloading: ${fileName}`)
-}
-
-// Delete reviewer
-function deleteReviewer(id) {
-  if (confirm('Are you sure you want to delete this reviewer?')) {
-    reviewers.value = reviewers.value.filter((r) => r.id !== id)
-  }
 }
 </script>
 
@@ -90,33 +54,7 @@ function deleteReviewer(id) {
 
     <template #content>
       <v-container fluid class="py-6">
-        <!-- Upload Section -->
-        <v-card class="pa-6 mb-10 hover:shadow-lg transition-all">
-          <h1 class="text-2xl font-bold mb-4">Upload Your Reviewer</h1>
-
-          <v-form>
-            <v-text-field
-              v-model="newReviewerTitle"
-              label="Reviewer Title"
-              placeholder="e.g., Numerical Reasoning Reviewer"
-              outlined
-              class="mb-4"
-            />
-
-            <v-file-input
-              label="Attach Reviewer File (PDF, DOCX)"
-              accept=".pdf,.docx"
-              outlined
-              @change="handleFileChange"
-              class="mb-4"
-            />
-
-            <v-btn color="primary" @click="uploadReviewer">Upload Reviewer</v-btn>
-          </v-form>
-        </v-card>
-
-        <!-- Uploaded Reviewers Section -->
-        <h2 class="text-2xl font-bold mb-4">Uploaded Reviewers</h2>
+        <h1 class="text-2xl font-bold mb-6">All Uploaded Reviewers</h1>
 
         <v-row dense>
           <v-col v-for="reviewer in reviewers" :key="reviewer.id" cols="12" md="6" lg="4">
@@ -149,16 +87,6 @@ function deleteReviewer(id) {
                 <v-btn color="primary" variant="outlined" @click="downloadReviewer(reviewer.file)">
                   View/Download
                 </v-btn>
-
-                <!-- Only show delete if uploaded by "You" -->
-                <v-btn
-                  color="error"
-                  variant="text"
-                  v-if="reviewer.uploadedBy === 'You'"
-                  @click="deleteReviewer(reviewer.id)"
-                >
-                  Delete
-                </v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -174,10 +102,6 @@ function deleteReviewer(id) {
 }
 .text-gray-600 {
   color: #4b5563;
-}
-.hover\:shadow-lg:hover {
-  box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.2);
-  transition: box-shadow 0.3s ease;
 }
 .hover\:shadow-md:hover {
   box-shadow: 0 6px 12px -3px rgba(0, 0, 0, 0.15);
