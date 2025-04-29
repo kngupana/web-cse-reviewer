@@ -1,5 +1,4 @@
 <script setup>
-import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref } from 'vue'
 
@@ -80,19 +79,10 @@ function deleteReviewer(id) {
 </script>
 
 <template>
-  <AppLayout
-    :is-with-app-bar-nav-icon="true"
-    @is-drawer-visible="isDrawerVisible = !isDrawerVisible"
-  >
-    <template #navigation>
-      <SideNavigation :is-drawer-visible="isDrawerVisible" />
-    </template>
-
-    <template #content>
-      <v-container fluid class="py-6">
-        <!-- Upload Section -->
-        <v-card class="pa-6 mb-10 hover:shadow-lg transition-all">
-          <h1 class="text-2xl font-bold mb-4">Upload Your Reviewer</h1>
+  <v-container fluid class="py-6">
+    <!-- Upload Section -->
+    <v-card class="pa-6 mb-10 hover:shadow-lg transition-all">
+      <h1 class="text-2xl font-bold mb-4">Upload Your Reviewer</h1>
 
           <v-form>
             <v-text-field
