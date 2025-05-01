@@ -1,20 +1,47 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useReactionStore } from '@/stores/useReactionStore'
+import { useReviewersStore } from '@/stores/useReviewersStore' // if needed
 
 const isDrawerVisible = ref(true)
 
+// Initialize store
+const reactionStore = useReactionStore()
+
 const reviewers = ref([])
 
-function likeReviewer(id) {
-  const reviewer = reviewers.value.find((r) => r.id === id)
-  if (reviewer) reviewer.likes++
+// Mock user ID for demo
+const userId = 'user-123'
+
+// Load reactions when component mounts
+onMounted(async () => {
+  await reactionStore.fetchReactions()
+})
+
+function likeReviewer(reviewerId) {
+  const existing = reactionStore.getUserReaction(reviewerId, userId)
+  if (!existing) {
+    reactionStore.addReaction(reviewerId, userId, 'like')
+  } else if (existing.type === 'dislike') {
+    reactionStore.removeReaction(reviewerId, userId)
+    reactionStore.addReaction(reviewerId, userId, 'like')
+  } else {
+    reactionStore.removeReaction(reviewerId, userId)
+  }
 }
 
-function dislikeReviewer(id) {
-  const reviewer = reviewers.value.find((r) => r.id === id)
-  if (reviewer) reviewer.dislikes++
+function dislikeReviewer(reviewerId) {
+  const existing = reactionStore.getUserReaction(reviewerId, userId)
+  if (!existing) {
+    reactionStore.addReaction(reviewerId, userId, 'dislike')
+  } else if (existing.type === 'like') {
+    reactionStore.removeReaction(reviewerId, userId)
+    reactionStore.addReaction(reviewerId, userId, 'dislike')
+  } else {
+    reactionStore.removeReaction(reviewerId, userId)
+  }
 }
 
 function downloadReviewer(fileName) {
@@ -70,12 +97,16 @@ function downloadReviewer(fileName) {
                     <v-btn icon @click="likeReviewer(reviewer.id)">
                       <v-icon color="green">mdi-thumb-up</v-icon>
                     </v-btn>
-                    <span class="mr-4 font-medium text-green-700">{{ reviewer.likes }}</span>
+                    <span class="mr-4 font-medium text-green-700">
+                      {{ reactionStore.getReactionCount(reviewer.id, 'like') }}
+                    </span>
 
                     <v-btn icon @click="dislikeReviewer(reviewer.id)">
                       <v-icon color="red">mdi-thumb-down</v-icon>
                     </v-btn>
-                    <span class="font-medium text-red-700">{{ reviewer.dislikes }}</span>
+                    <span class="font-medium text-red-700">
+                      {{ reactionStore.getReactionCount(reviewer.id, 'dislike') }}
+                    </span>
                   </div>
 
                   <v-btn color="indigo" variant="tonal" @click="downloadReviewer(reviewer.file)">
