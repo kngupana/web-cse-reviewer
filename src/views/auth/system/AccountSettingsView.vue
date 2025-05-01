@@ -6,7 +6,6 @@ import { requiredValidator, emailValidator } from '@/utils/validators'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
-
 // Form state
 const form = ref({
   fullName: '',
@@ -42,16 +41,18 @@ const isDrawerVisible = ref(mobile.value ? false : true)
     :is-with-app-bar-nav-icon="true"
     @is-drawer-visible="isDrawerVisible = !isDrawerVisible"
   >
-    <!-- Navigation Slot -->
+    <!-- Side Navigation -->
     <template #navigation>
       <SideNavigation :is-drawer-visible="isDrawerVisible" />
     </template>
 
-    <!-- Content Slot -->
+    <!-- Main Content -->
     <template #content>
-      <v-container class="py-10" max-width="500px">
-        <v-card elevation="10" class="pa-6 rounded-xl">
-          <v-card-title class="text-h5 font-weight-bold mb-6">Account Settings</v-card-title>
+      <v-container class="py-10" max-width="600px">
+        <v-card class="pa-6 elevation-6 rounded-xl bg-blue-grey-lighten-5">
+          <v-card-title class="text-xl font-bold text-blue-grey-darken-3 mb-6">
+            🧾 Exam Taker Profile
+          </v-card-title>
 
           <v-form>
             <v-text-field
@@ -59,31 +60,35 @@ const isDrawerVisible = ref(mobile.value ? false : true)
               v-model="form.fullName"
               prepend-inner-icon="mdi-account"
               :rules="[requiredValidator]"
+              class="mb-4"
             />
 
             <v-text-field
-              label="Email"
+              label="Email Address"
               v-model="form.email"
               prepend-inner-icon="mdi-email"
               :rules="[requiredValidator, emailValidator]"
+              class="mb-4"
             />
 
             <v-text-field
               label="New Password"
               v-model="form.newPassword"
-              prepend-inner-icon="mdi-lock"
+              prepend-inner-icon="mdi-lock-outline"
               type="password"
+              class="mb-4"
             />
 
             <v-text-field
               label="Confirm New Password"
               v-model="form.confirmPassword"
-              prepend-inner-icon="mdi-lock"
+              prepend-inner-icon="mdi-lock-check-outline"
               type="password"
+              class="mb-6"
             />
 
-            <v-btn color="purple-darken-3" class="mt-4" block @click="saveSettings">
-              Save Changes
+            <v-btn color="indigo-darken-3" block class="py-3 text-white" @click="saveSettings">
+              💾 Save Profile Changes
             </v-btn>
           </v-form>
         </v-card>
@@ -91,3 +96,12 @@ const isDrawerVisible = ref(mobile.value ? false : true)
     </template>
   </AppLayout>
 </template>
+
+<style scoped>
+.text-blue-grey-darken-3 {
+  color: #37474f;
+}
+.bg-blue-grey-lighten-5 {
+  background-color: #eceff1;
+}
+</style>
