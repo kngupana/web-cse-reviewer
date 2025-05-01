@@ -91,5 +91,3 @@ const isDrawerVisible = ref(mobile.value ? false : true)
     </template>
   </AppLayout>
 </template>
-
-

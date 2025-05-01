@@ -5,25 +5,176 @@ import { ref } from 'vue'
 
 const isDrawerVisible = ref(true)
 
-const dashboardStats = [
-  { title: 'Registered Examinees', value: 542, icon: 'mdi-account-group' },
-  { title: 'Available Reviewers', value: 38, icon: 'mdi-book-open-page-variant' },
-  { title: 'Practice Quizzes', value: 15, icon: 'mdi-clipboard-list' },
-  { title: 'Uploaded Materials', value: 120, icon: 'mdi-file-document' },
-]
+// State for loading indicators
+const isRefreshing = ref(false)
 
-const notifications = [
+// Dialog controls
+const addItemDialog = ref(false)
+const settingsDrawer = ref(false)
+const fileInput = ref(null)
+
+// Chart Data
+const activityChartOptions = ref({
+  chart: {
+    type: 'area',
+    height: 250,
+    toolbar: { show: false },
+    zoom: { enabled: false },
+    foreColor: '#6b7280',
+  },
+  colors: ['#4f46e5', '#10b981'],
+  dataLabels: {
+    enabled: false,
+  },
+  stroke: {
+    curve: 'smooth',
+    width: 3,
+  },
+  fill: {
+    type: 'gradient',
+    gradient: {
+      shadeIntensity: 1,
+      opacityFrom: 0.4,
+      opacityTo: 0,
+      stops: [0, 90, 100],
+    },
+  },
+  xaxis: {
+    categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    labels: {
+      style: { fontSize: '12px' },
+    },
+  },
+  yaxis: {
+    labels: {
+      style: { fontSize: '12px' },
+    },
+  },
+  grid: {
+    borderColor: '#e5e7eb',
+    strokeDashArray: 4,
+  },
+  tooltip: {
+    theme: 'light',
+  },
+})
+
+const activitySeries = ref([
   {
-    title: 'Civil Service Exam',
-    date: 'June 23, 2025',
-    message: 'Mark your calendars! Upcoming CSE.',
+    name: 'Visits',
+    data: [30, 41, 35, 51, 49, 62, 69],
   },
   {
-    title: 'New Reviewer',
-    date: 'April 25, 2025',
-    message: 'Mathematics Reviewer Part 2 uploaded.',
+    name: 'Engagement',
+    data: [15, 25, 32, 40, 38, 55, 60],
   },
-]
+])
+
+// Stats Data
+const stats = ref([
+  {
+    title: 'Total Users',
+    value: '2,456',
+    change: '+12%',
+    icon: 'mdi-account-group',
+    color: 'primary',
+  },
+  {
+    title: 'Active Sessions',
+    value: '183',
+    change: '+3.2%',
+    icon: 'mdi-chart-line',
+    color: 'success',
+  },
+  {
+    title: 'Storage Used',
+    value: '82%',
+    change: '-5%',
+    icon: 'mdi-database',
+    color: 'warning',
+  },
+  {
+    title: 'Tasks Completed',
+    value: '24/30',
+    change: '+8%',
+    icon: 'mdi-check-circle',
+    color: 'info',
+  },
+])
+
+// Quick Actions
+const quickActions = ref([
+  { icon: 'mdi-plus', title: 'Add Item', color: 'primary', action: 'addItem' },
+  { icon: 'mdi-upload', title: 'Upload Files', color: 'secondary', action: 'uploadFiles' },
+  { icon: 'mdi-chart-bar', title: 'View Reports', color: 'success', action: 'viewReports' },
+  { icon: 'mdi-cog', title: 'Settings', color: 'info', action: 'openSettings' },
+])
+
+// Tasks Data
+const tasks = ref([
+  {
+    id: 1,
+    title: 'Update documentation',
+    status: 'completed',
+    priority: 'medium',
+  },
+  {
+    id: 2,
+    title: 'Fix mobile layout issues',
+    status: 'in-progress',
+    priority: 'high',
+  },
+  {
+    id: 3,
+    title: 'Add dark mode support',
+    status: 'pending',
+    priority: 'low',
+  },
+])
+
+// Click Handlers
+const refreshDashboard = async () => {
+  isRefreshing.value = true
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    console.log('Dashboard refreshed!')
+  } finally {
+    isRefreshing.value = false
+  }
+}
+
+const handleQuickAction = (action) => {
+  switch (action) {
+    case 'addItem':
+      addItemDialog.value = true
+      break
+    case 'uploadFiles':
+      fileInput.value?.click()
+      break
+    case 'viewReports':
+      router.push('/reports')
+      break
+    case 'openSettings':
+      settingsDrawer.value = true
+      break
+  }
+}
+
+const handleFileUpload = (event) => {
+  const files = event.target.files
+  console.log('Files selected:', files)
+  // Add file upload logic here
+}
+
+const viewAllTasks = () => {
+  router.push('/tasks')
+}
+
+const viewTaskDetails = (taskId) => {
+  const task = tasks.value.find((t) => t.id === taskId)
+  console.log('Viewing task:', task)
+  // Could implement task details view here
+}
 </script>
 
 <template>
@@ -74,13 +225,35 @@ const notifications = [
             </v-card>
           </v-col>
 
-          <v-col cols="12" md="6">
-            <v-card class="pa-6 hover:shadow-lg transition-all">
-              <v-card-title class="text-h6 font-weight-bold"> Take a Quiz </v-card-title>
-              <v-card-text> Test your knowledge by taking practice quizzes anytime. </v-card-text>
-              <v-card-actions>
-                <v-btn color="primary" text to="/quizzes">Go to Quizzes</v-btn>
-              </v-card-actions>
+          <!-- Quick Actions -->
+          <v-col cols="12" md="4">
+            <v-card class="elevation-2 rounded-lg">
+              <v-card-title class="text-h6 font-weight-bold">Quick Actions</v-card-title>
+              <v-card-text>
+                <v-row>
+                  <v-col v-for="(action, index) in quickActions" :key="index" cols="6">
+                    <v-btn
+                      :color="action.color"
+                      variant="tonal"
+                      block
+                      height="100"
+                      class="d-flex flex-column"
+                      @click="handleQuickAction(action.action)"
+                    >
+                      <v-icon :icon="action.icon" size="30" class="mb-2"></v-icon>
+                      <span class="text-caption">{{ action.title }}</span>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                <!-- Hidden file input -->
+                <input
+                  ref="fileInput"
+                  type="file"
+                  style="display: none"
+                  @change="handleFileUpload"
+                  multiple
+                />
+              </v-card-text>
             </v-card>
           </v-col>
         </v-row>
@@ -127,3 +300,5 @@ const notifications = [
   transition: all 0.3s ease;
 }
 </style>
+CAN YOU MAKE A NEW DASHBOARD LAY OUT FOR CIVIL SERVICE EXAM REVIEWER WEB APP WITHOUT REMOVING THE
+PROFILE HEADER, LIGHT/DARK MODE, SIDE NAVIGATION AND HEADER AND FOOTER
