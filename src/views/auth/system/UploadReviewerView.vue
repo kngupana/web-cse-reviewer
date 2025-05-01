@@ -2,8 +2,9 @@
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref } from 'vue'
-import VueApexCharts from 'vue3-apexcharts'
-import { useRouter } from 'vue-router'
+//import VueApexCharts from 'vue3-apexcharts'
+//import { useRouter } from 'vue-router'
+
 
 // Side Navigation control
 const isDrawerVisible = ref(true)
