@@ -1,15 +1,15 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
-<<<<<<< HEAD
+
 import { ref } from 'vue'
 //import VueApexCharts from 'vue3-apexcharts'
 //import { useRouter } from 'vue-router'
 
-=======
-import { ref, onMounted } from 'vue'
+
+import { onMounted } from 'vue'
 import { useReviewersStore } from '@/stores/useReviewersStore'
->>>>>>> 2195b321260c8743313778925716f350cf0718fa
+
 
 const isDrawerVisible = ref(true)
 const newReviewerTitle = ref('')

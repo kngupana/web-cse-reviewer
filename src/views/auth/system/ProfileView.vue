@@ -1,17 +1,46 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import {  getUserInformation, } from '@/utils/supabase'
+import { getAvatarText } from '@/utils/helpers'
 
 const isDrawerVisible = ref(true)
+const isEditDialogOpen = ref(false)
 
-// Mock user profile data (you can replace with real user data later)
-const userProfile = ref({
-  name: 'John Doe',
-  email: 'johndoe@example.com',
-  username: 'johndoe123',
-  bio: 'Aspiring Civil Service Officer. Loves math, history, and public service.',
-  avatar: 'https://i.pravatar.cc/150?img=3', // Placeholder avatar
+const userData = ref({
+  initials: '',
+  email: '',
+  fullname: ''
+})
+
+
+const editedProfile = ref({ ...userData.value })
+
+const openEditDialog = () => {
+  editedProfile.value = { ...userData.value }
+  isEditDialogOpen.value = true
+}
+
+const saveProfile = async () => {
+  userData.value = { ...editedProfile.value }
+  isEditDialogOpen.value = false
+  // You can add a Supabase update query here
+}
+
+//Getting User Information Functionality
+const getUser = async() => {
+  const userMetadata = await getUserInformation()
+
+  userData.value.email = userMetadata.email
+  userData.value.fullname = userMetadata.firstname + ' ' + userMetadata.lastname
+  userData.value.initials = getAvatarText(userData.value.fullname)
+
+}
+
+//Load functions during component rendering
+onMounted(() => {
+  getUser()
 })
 </script>
 
@@ -30,30 +59,35 @@ const userProfile = ref({
           <v-col cols="12" md="8" lg="6">
             <v-card class="pa-6 text-center rounded-xl hover:shadow-lg transition-all">
               <v-avatar size="120" class="mx-auto mb-4">
-                <img :src="userProfile.avatar" alt="User Avatar" />
-              </v-avatar>
+  <img v-if="userData.avatar" :src="userData.avatar" alt="User Avatar" />
+  <span v-else class="text-h4">{{ userData.initials }}</span>
+</v-avatar>
 
-              <h2 class="text-2xl font-bold mb-1">{{ userProfile.name }}</h2>
-              <p class="text-gray-600 mb-4">@{{ userProfile.username }}</p>
+  <h2 class="text-2xl font-bold mb-1">{{ userData.fullname }}</h2>
+  <p class="text-gray-600 mb-2">@{{ userData.username }}</p> <!-- Ensure you define 'username' in userData if needed -->
+  <p class="text-gray-600 mb-2">{{ userData.email }}</p>
 
-              <v-divider class="my-4"></v-divider>
-
-              <v-list-item>
-                <v-list-item-title class="font-bold">Email</v-list-item-title>
-                <v-list-item-subtitle>{{ userProfile.email }}</v-list-item-subtitle>
-              </v-list-item>
-
-              <v-list-item class="mt-4">
-                <v-list-item-title class="font-bold">Bio</v-list-item-title>
-                <v-list-item-subtitle>{{ userProfile.bio }}</v-list-item-subtitle>
-              </v-list-item>
-
-              <v-divider class="my-6"></v-divider>
-
-              <v-btn color="primary" variant="flat" class="w-full"> Edit Profile </v-btn>
+              <v-btn color="primary" variant="flat" class="w-full" @click="openEditDialog">Edit Profile</v-btn>
             </v-card>
           </v-col>
         </v-row>
+
+        <!-- Edit Profile Dialog -->
+        <v-dialog v-model="isEditDialogOpen" max-width="500px">
+          <v-card>
+            <v-card-title>Edit Profile</v-card-title>
+            <v-card-text>
+              <v-text-field v-model="editedProfile.avatar" label="Profile Image URL" />
+              <v-text-field v-model="editedProfile.name" label="Full Name" />
+              <v-text-field v-model="editedProfile.email" label="Email" />
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn text @click="isEditDialogOpen = false">Cancel</v-btn>
+              <v-btn color="primary" @click="saveProfile">Save</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-container>
     </template>
   </AppLayout>
