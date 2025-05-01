@@ -3,30 +3,10 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref } from 'vue'
 
-// Side Navigation control
 const isDrawerVisible = ref(true)
 
-// Reviewers list (this can later be replaced with real API or a store)
-const reviewers = ref([
-  {
-    id: 1,
-    title: 'Mathematics Reviewer',
-    file: 'math.pdf',
-    likes: 12,
-    dislikes: 1,
-    uploadedBy: 'UserA',
-  },
-  {
-    id: 2,
-    title: 'English Grammar Reviewer',
-    file: 'english.pdf',
-    likes: 8,
-    dislikes: 0,
-    uploadedBy: 'UserB',
-  },
-])
+const reviewers = ref([])
 
-// Like and Dislike handlers
 function likeReviewer(id) {
   const reviewer = reviewers.value.find((r) => r.id === id)
   if (reviewer) reviewer.likes++
@@ -37,7 +17,6 @@ function dislikeReviewer(id) {
   if (reviewer) reviewer.dislikes++
 }
 
-// Download handler
 function downloadReviewer(fileName) {
   alert(`Downloading: ${fileName}`)
 }
@@ -53,41 +32,57 @@ function downloadReviewer(fileName) {
     </template>
 
     <template #content>
-      <v-container fluid class="py-6">
-        <h1 class="text-2xl font-bold mb-6">All Uploaded Reviewers</h1>
+      <v-container
+        fluid
+        class="py-10 px-4"
+        style="background: linear-gradient(to bottom, #f0f4ff, #ffffff)"
+      >
+        <h1 class="text-3xl font-bold mb-8 text-center" style="color: #1e3a8a">
+          📚 CSE Reviewer Library
+        </h1>
 
         <v-row dense>
-          <v-col v-for="reviewer in reviewers" :key="reviewer.id" cols="12" md="6" lg="4">
-            <v-card class="pa-4 hover:shadow-md transition-all">
-              <v-card-title class="font-bold text-primary">
+          <v-col
+            v-for="reviewer in reviewers"
+            :key="reviewer.id"
+            cols="12"
+            sm="6"
+            md="4"
+            class="d-flex"
+          >
+            <v-card class="pa-5 rounded-xl elevation-4 reviewer-card" style="width: 100%">
+              <v-card-title class="text-lg font-bold text-indigo-900">
                 {{ reviewer.title }}
               </v-card-title>
 
-              <v-card-subtitle class="text-gray-500 mb-2">
-                Uploaded by: {{ reviewer.uploadedBy }}
+              <v-card-subtitle class="text-sm text-indigo-700 mb-2">
+                Uploaded by <strong>{{ reviewer.uploadedBy }}</strong>
               </v-card-subtitle>
 
               <v-card-text>
-                <div class="text-gray-600 mb-4">File: {{ reviewer.file }}</div>
+                <p class="text-gray-600 mb-3">
+                  <v-icon size="18" color="indigo">mdi-file-document</v-icon>
+                  {{ reviewer.file }}
+                </p>
 
-                <div class="d-flex align-center justify-center mb-4">
-                  <v-btn icon @click="likeReviewer(reviewer.id)">
-                    <v-icon color="green">mdi-thumb-up</v-icon>
-                  </v-btn>
-                  <span class="mr-4">{{ reviewer.likes }}</span>
+                <div class="d-flex justify-space-between align-center">
+                  <div class="d-flex align-center">
+                    <v-btn icon @click="likeReviewer(reviewer.id)">
+                      <v-icon color="green">mdi-thumb-up</v-icon>
+                    </v-btn>
+                    <span class="mr-4 font-medium text-green-700">{{ reviewer.likes }}</span>
 
-                  <v-btn icon @click="dislikeReviewer(reviewer.id)">
-                    <v-icon color="red">mdi-thumb-down</v-icon>
+                    <v-btn icon @click="dislikeReviewer(reviewer.id)">
+                      <v-icon color="red">mdi-thumb-down</v-icon>
+                    </v-btn>
+                    <span class="font-medium text-red-700">{{ reviewer.dislikes }}</span>
+                  </div>
+
+                  <v-btn color="indigo" variant="tonal" @click="downloadReviewer(reviewer.file)">
+                    View / Download
                   </v-btn>
-                  <span>{{ reviewer.dislikes }}</span>
                 </div>
               </v-card-text>
-
-              <v-card-actions class="justify-end">
-                <v-btn color="primary" variant="outlined" @click="downloadReviewer(reviewer.file)">
-                  View/Download
-                </v-btn>
-              </v-card-actions>
             </v-card>
           </v-col>
         </v-row>
@@ -97,17 +92,14 @@ function downloadReviewer(fileName) {
 </template>
 
 <style scoped>
-.text-gray-500 {
-  color: #6b7280;
+.reviewer-card {
+  background: linear-gradient(to right, #eef2ff, #ffffff);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
-.text-gray-600 {
-  color: #4b5563;
-}
-.hover\:shadow-md:hover {
-  box-shadow: 0 6px 12px -3px rgba(0, 0, 0, 0.15);
-  transition: box-shadow 0.3s ease;
-}
-.transition-all {
-  transition: all 0.3s ease;
+.reviewer-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(30, 58, 138, 0.15);
 }
 </style>

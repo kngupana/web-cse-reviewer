@@ -149,7 +149,7 @@ function deleteReviewerById(id) {
                   color="error"
                   variant="text"
                   v-if="reviewer.uploadedBy === 'You'"
-                 @click="deleteReviewerById(reviewer.id)"
+                  @click="deleteReviewerById(reviewer.id)"
                 >
                   Delete
                 </v-btn>
