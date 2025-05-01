@@ -1,28 +1,45 @@
 <template>
-  <v-navigation-drawer :model-value="isDrawerVisible" app color="#4B0082" dark>
-    <!-- Navigation List -->
+  <v-navigation-drawer
+    :model-value="isDrawerVisible"
+    app
+    color="#2e1065"
+    dark
+    class="custom-drawer"
+  >
     <v-list dense nav>
-      <!-- Dashboard Link -->
-      <v-list-item prepend-icon="mdi-view-dashboard" title="Dashboard" to="/dashboard" />
+      <v-list-item class="text-center mb-6">
+        <v-icon color="deep-purple-lighten-3" size="40">mdi-book-open-page-variant</v-icon>
+        <div class="text-h6 mt-2 font-weight-bold">CSE Reviewer</div>
+      </v-list-item>
 
-      <!-- Reviewer Upload Link -->
-      <RouterLink>
-        <v-list-item prepend-icon="mdi-upload" title="Upload Reviewer" to="/upload"
-      /></RouterLink>
-      <RouterLink>
-        <v-list-item prepend-icon="mdi-file-document" title="All Reviewers" to="/reviewers"
-      /></RouterLink>
+      <v-divider class="mb-3"></v-divider>
 
-      <RouterLink>
-        <!-- Profile Link -->
-        <v-divider class="my-4"></v-divider>
-        <v-list-item prepend-icon="mdi-account" title="Profile" to="/profile"
-      /></RouterLink>
+      <v-list-item
+        prepend-icon="mdi-view-dashboard"
+        title="Dashboard"
+        to="/dashboard"
+        class="nav-item"
+      />
 
-      <RouterLink>
-        <!-- Account Settings Link -->
-        <v-list-item prepend-icon="mdi-cogs" title="Account Settings" to="/settings"
-      /></RouterLink>
+      <v-list-item
+        prepend-icon="mdi-upload"
+        title="Upload Reviewer"
+        to="/upload"
+        class="nav-item"
+      />
+
+      <v-list-item
+        prepend-icon="mdi-file-document"
+        title="All Reviewers"
+        to="/reviewers"
+        class="nav-item"
+      />
+
+      <v-divider class="my-3"></v-divider>
+
+      <v-list-item prepend-icon="mdi-account" title="Profile" to="/profile" class="nav-item" />
+
+      <v-list-item prepend-icon="mdi-cogs" title="Settings" to="/settings" class="nav-item" />
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -34,5 +51,18 @@ defineProps({
 </script>
 
 <style scoped>
-/* Optional: You can customize the side navigation styles here */
+.custom-drawer {
+  background: linear-gradient(to bottom, #2e1065, #4b0082);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-item {
+  border-radius: 8px;
+  margin-bottom: 6px;
+  transition: background 0.3s ease;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
 </style>

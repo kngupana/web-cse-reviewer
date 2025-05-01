@@ -1,33 +1,10 @@
 <script setup>
-import { onMounted } from 'vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
-import { ref } from 'vue'
-import VueApexCharts from 'vue3-apexcharts'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useReviewersStore } from '@/stores/useReviewersStore'
 
 const isDrawerVisible = ref(true)
-
-// Reviewers data
-const reviewers = ref([
-  {
-    id: 1,
-    title: 'Mathematics Reviewer',
-    file: 'math.pdf',
-    likes: 12,
-    dislikes: 1,
-    uploadedBy: 'UserA',
-  },
-  {
-    id: 2,
-    title: 'English Grammar Reviewer',
-    file: 'english.pdf',
-    likes: 8,
-    dislikes: 0,
-    uploadedBy: 'UserB',
-  },
-])
-
 const newReviewerTitle = ref('')
 const newReviewerFile = ref(null)
 
@@ -80,9 +57,7 @@ function dislikeReviewer(id) {
 }
 
 function downloadReviewer(fileName) {
-  // Assuming files are saved under /public/uploads/
-  const fileUrl = `/uploads/${fileName}`
-  window.open(fileUrl, '_blank')
+  alert(`Downloading: ${fileName}`)
 }
 
 function deleteReviewerById(id) {
