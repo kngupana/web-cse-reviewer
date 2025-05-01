@@ -1,32 +1,20 @@
 <script setup>
+import { onMounted } from 'vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { useRouter } from 'vue-router'
 
+onMounted(() => {
+  console.log('UploadReviewerView mounted')
+})
+
 // Side Navigation control
 const isDrawerVisible = ref(true)
 
 // Reviewers data
-const reviewers = ref([
-  {
-    id: 1,
-    title: 'Mathematics Reviewer',
-    file: 'math.pdf',
-    likes: 12,
-    dislikes: 1,
-    uploadedBy: 'UserA',
-  },
-  {
-    id: 2,
-    title: 'English Grammar Reviewer',
-    file: 'english.pdf',
-    likes: 8,
-    dislikes: 0,
-    uploadedBy: 'UserB',
-  },
-])
+const reviewers = ref([])
 
 const newReviewerTitle = ref('')
 const newReviewerFile = ref(null)
@@ -70,7 +58,9 @@ function dislikeReviewer(id) {
 
 // Download reviewer
 function downloadReviewer(fileName) {
-  alert(`Downloading: ${fileName}`)
+  // Assuming files are saved under /public/uploads/
+  const fileUrl = `/uploads/${fileName}`
+  window.open(fileUrl, '_blank')
 }
 
 // Delete reviewer
