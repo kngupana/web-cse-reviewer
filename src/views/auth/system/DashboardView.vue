@@ -147,6 +147,7 @@ const refreshDashboard = async () => {
 }
 
 const handleQuickAction = (action) => {
+
   switch(action) {
     case 'addItem':
       addItemDialog.value = true
@@ -265,6 +266,7 @@ const viewTaskDetails = (taskId) => {
                       height="100"
                       class="d-flex flex-column"
                       @click="handleQuickAction(action.action)"
+                      :loading="action.loading"
                     >
                       <v-icon :icon="action.icon" size="30" class="mb-2"></v-icon>
                       <span class="text-caption">{{ action.title }}</span>
@@ -448,3 +450,4 @@ const viewTaskDetails = (taskId) => {
   background-color: rgba(0, 0, 0, 0.04);
 }
 </style>
+CAN YOU MAKE A NEW DASHBOARD LAY OUT FOR CIVIL SERVICE EXAM REVIEWER WEB APP WITHOUT REMOVING THE PROFILE HEADER, LIGHT/DARK MODE, SIDE NAVIGATION AND HEADER AND FOOTER

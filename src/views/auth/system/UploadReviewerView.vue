@@ -1,83 +1,75 @@
 <script setup>
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
+<<<<<<< HEAD
 import { ref } from 'vue'
 //import VueApexCharts from 'vue3-apexcharts'
 //import { useRouter } from 'vue-router'
 
+=======
+import { ref, onMounted } from 'vue'
+import { useReviewersStore } from '@/stores/useReviewersStore'
+>>>>>>> 2195b321260c8743313778925716f350cf0718fa
 
-// Side Navigation control
 const isDrawerVisible = ref(true)
-
-// Reviewers data
-const reviewers = ref([
-  {
-    id: 1,
-    title: 'Mathematics Reviewer',
-    file: 'math.pdf',
-    likes: 12,
-    dislikes: 1,
-    uploadedBy: 'UserA',
-  },
-  {
-    id: 2,
-    title: 'English Grammar Reviewer',
-    file: 'english.pdf',
-    likes: 8,
-    dislikes: 0,
-    uploadedBy: 'UserB',
-  },
-])
-
 const newReviewerTitle = ref('')
 const newReviewerFile = ref(null)
 
-// Handle file selection
+// Pinia store
+const store = useReviewersStore()
+const { reviewers, fetchReviewers, addReviewer, deleteReviewer } = store
+
+onMounted(async () => {
+  try {
+    await fetchReviewers()
+  } catch (error) {
+    console.error('Error fetching reviewers:', error)
+    alert('Failed to load reviewers. Please check your network or server.')
+  }
+})
+
 function handleFileChange(event) {
   newReviewerFile.value = event.target.files[0]
 }
 
-// Upload new reviewer
 function uploadReviewer() {
   if (!newReviewerTitle.value || !newReviewerFile.value) {
     alert('Please provide both title and file.')
     return
   }
 
-  reviewers.value.push({
-    id: reviewers.value.length + 1,
+  const newReviewer = {
+    id: reviewers.length + 1,
     title: newReviewerTitle.value,
     file: newReviewerFile.value.name,
     likes: 0,
     dislikes: 0,
-    uploadedBy: 'You', // Replace with logged-in user name later
-  })
+    uploadedBy: 'You',
+  }
 
-  // Clear form
+  addReviewer(newReviewer)
+
   newReviewerTitle.value = ''
   newReviewerFile.value = null
 }
 
-// Like and dislike
 function likeReviewer(id) {
-  const reviewer = reviewers.value.find((r) => r.id === id)
+  const reviewer = reviewers.find((r) => r.id === id)
   if (reviewer) reviewer.likes++
 }
 
 function dislikeReviewer(id) {
-  const reviewer = reviewers.value.find((r) => r.id === id)
+  const reviewer = reviewers.find((r) => r.id === id)
   if (reviewer) reviewer.dislikes++
 }
 
-// Download reviewer
 function downloadReviewer(fileName) {
   alert(`Downloading: ${fileName}`)
 }
 
-// Delete reviewer
-function deleteReviewer(id) {
+function deleteReviewerById(id) {
   if (confirm('Are you sure you want to delete this reviewer?')) {
-    reviewers.value = reviewers.value.filter((r) => r.id !== id)
+    deleteReviewer(id)
   }
 }
 </script>
@@ -157,7 +149,7 @@ function deleteReviewer(id) {
                   color="error"
                   variant="text"
                   v-if="reviewer.uploadedBy === 'You'"
-                  @click="deleteReviewer(reviewer.id)"
+                 @click="deleteReviewerById(reviewer.id)"
                 >
                   Delete
                 </v-btn>
