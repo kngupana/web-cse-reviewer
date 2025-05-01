@@ -1,29 +1,45 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
+import { supabase } from '@/utils/supabase'
+import { useAuthUserStore } from './authUser'
+
 
 export const useReviewersStore = defineStore('reviewers', () => {
+  const authStore = useAuthUserStore()
+
   // State
+  const reviewersFromApi = ref([])
   const reviewers = ref([])
 
-  // Actions
-  async function fetchReviewers() {
-    try {
-      const response = await axios.get('https://api.restful-api.dev/objects')
-      reviewers.value = response.data
-    } catch (error) {
-      console.error('Error fetching reviewers:', error)
-    }
+  // Reset State
+  function $reset() {
+    reviewersFromApi.value = []
+    reviewers.value = []
   }
 
-  async function addReviewer(newReviewer) {
-    try {
-      // POST request to add new reviewer
-      const response = await axios.post('https://api.example.com/reviewers', newReviewer)
-      reviewers.value.push(response.data)
-    } catch (error) {
-      console.error('Error adding reviewer:', error)
-    }
+  // Actions
+  async function addReviewersFromApi() {
+    const response = await axios.get('https://api.restful-api.dev/objects')
+    reviewersFromApi.value = response.data
+
+    await supabase.from('reviewers').delete().neq('id', 0)
+
+    const transformedData = reviewersFromApi.value.map(r => ({
+      user_id: authStore.userData.id,
+      file_name: r.name,
+      file_path: r.data?. path ?? '',
+      description: r.data?.description ?? '',
+
+    }))
+
+    const { data } = await supabase.from('reviewers').insert(transformedData).select()
+    if (data) await addReviewers()
+  }
+
+  async function addReviewers() {
+    const { data } = await supabase.from('reviewers').select('*')
+    reviewers.value = data
   }
 
   function likeReviewer(id) {
@@ -40,12 +56,24 @@ export const useReviewersStore = defineStore('reviewers', () => {
     reviewers.value = reviewers.value.filter(r => r.id !== id)
   }
 
+  function addReviewer(newReviewer) {
+    if (Array.isArray(reviewers.value)) {
+      reviewers.value.push(newReviewer)
+    } else {
+      reviewers.value = [newReviewer]
+    }
+  }
+
+
   return {
+    reviewersFromApi,
     reviewers,
-    fetchReviewers,
-    addReviewer,
+    $reset,
+    addReviewersFromApi,
+    addReviewers,
     likeReviewer,
     dislikeReviewer,
-    deleteReviewer
+    deleteReviewer,
+    addReviewer
   }
 })

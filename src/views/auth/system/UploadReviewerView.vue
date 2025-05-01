@@ -6,60 +6,64 @@ import { ref } from 'vue'
 //import VueApexCharts from 'vue3-apexcharts'
 //import { useRouter } from 'vue-router'
 
-
 import { onMounted } from 'vue'
 import { useReviewersStore } from '@/stores/useReviewersStore'
-
+//import { supabase } from '@/utils/supabase'
 
 const isDrawerVisible = ref(true)
 const newReviewerTitle = ref('')
 const newReviewerFile = ref(null)
 
+
 // Pinia store
-const store = useReviewersStore()
-const { reviewers, fetchReviewers, addReviewer, deleteReviewer } = store
+const reviewersStore = useReviewersStore()
+const reviewers = reviewersStore.reviewers
+//const onRetrieveFromApi = async () => {
+//await reviewersStore.addReviewersFromApi()
+//}
 
 onMounted(async () => {
-  try {
-    await fetchReviewers()
-  } catch (error) {
-    console.error('Error fetching reviewers:', error)
-    alert('Failed to load reviewers. Please check your network or server.')
-  }
+  if (reviewersStore.reviewers.length == 0) await reviewersStore.addReviewers
 })
 
 function handleFileChange(event) {
   newReviewerFile.value = event.target.files[0]
 }
 
-function uploadReviewer() {
+async function uploadReviewer() {
   if (!newReviewerTitle.value || !newReviewerFile.value) {
     alert('Please provide both title and file.')
     return
   }
 
-  const newReviewer = {
-    id: reviewers.length + 1,
-    title: newReviewerTitle.value,
-    file: newReviewerFile.value.name,
-    likes: 0,
-    dislikes: 0,
-    uploadedBy: 'You',
+  try {
+    const newReviewer = {
+      id: reviewersStore.reviewers.length + 1, // ensure unique ID
+      title: newReviewerTitle.value,
+      file: newReviewerFile.value.name,
+      likes: 0,
+      dislikes: 0,
+      uploadedBy: 'You',
+    }
+
+    reviewersStore.addReviewer(newReviewer)
+
+    newReviewerTitle.value = ''
+    newReviewerFile.value = null
+  } catch (error) {
+    console.error('Error uploading reviewer:', error)
+    alert('Something went wrong while uploading. Please try again.')
   }
-
-  addReviewer(newReviewer)
-
-  newReviewerTitle.value = ''
-  newReviewerFile.value = null
 }
 
+
 function likeReviewer(id) {
-  const reviewer = reviewers.find((r) => r.id === id)
+  const reviewer = reviewer.find((r) => r.id === id)
   if (reviewer) reviewer.likes++
 }
 
 function dislikeReviewer(id) {
-  const reviewer = reviewers.find((r) => r.id === id)
+  const reviewer = reviewer.find((r) => r.id === id)
   if (reviewer) reviewer.dislikes++
 }
 
@@ -69,9 +73,10 @@ function downloadReviewer(fileName) {
 
 function deleteReviewerById(id) {
   if (confirm('Are you sure you want to delete this reviewer?')) {
-    deleteReviewer(id)
+    reviewersStore.deleteReviewer(id) // ✅ Use the method from the Pinia store
   }
 }
+
 </script>
 
 <template>
@@ -85,7 +90,7 @@ function deleteReviewerById(id) {
 
     <template #content>
       <v-container fluid class="py-6">
-        <!-- Upload Section -->
+        Upload Section
         <v-card class="pa-6 mb-10 hover:shadow-lg transition-all">
           <h1 class="text-2xl font-bold mb-4">Upload Your Reviewer</h1>
 
@@ -142,7 +147,10 @@ function deleteReviewerById(id) {
 
               <v-card-actions class="justify-end">
                 <v-btn color="primary" variant="outlined" @click="downloadReviewer(reviewer.file)">
-                  View/Download
+                  View
+                </v-btn>
+                <v-btn color="primary" variant="outlined" @click="downloadReviewer(reviewer.file)">
+                 Download
                 </v-btn>
 
                 <v-btn
@@ -181,3 +189,4 @@ function deleteReviewerById(id) {
   transition: all 0.3s ease;
 }
 </style>
+
