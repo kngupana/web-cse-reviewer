@@ -5,8 +5,7 @@ import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref } from 'vue'
 import { onMounted } from 'vue'
 import { useReviewersStore } from '@/stores/useReviewersStore'
-import { supabase } from '@/utils/supabase'
-import { useAuthUserStore } from '@/stores/authUser'
+//import { supabase } from '@/utils/supabase'
 
 const isDrawerVisible = ref(true)
 const newReviewerTitle = ref('')
@@ -15,8 +14,9 @@ const newReviewerFile = ref(null)
 // Pinia store
 const reviewersStore = useReviewersStore()
 const reviewers = reviewersStore.reviewers
-
-const authStore = useAuthUserStore()
+//const onRetrieveFromApi = async () => {
+//await reviewersStore.addReviewersFromApi()
+//}
 
 onMounted(async () => {
   const isAuthenticated = await authStore.isAuthenticated()
@@ -50,39 +50,17 @@ async function uploadReviewer() {
   }
 
   try {
-    // Step 1: Upload the file to Supabase Storage
-    const filePath = `${Date.now()}_${newReviewerFile.value.name}`
-    const { error: uploadError } = await supabase.storage
-      .from('reviewer-files')
-      .upload(filePath, newReviewerFile.value)
-
-    if (uploadError) {
-      console.error('Error uploading file:', uploadError.message)
-      alert('File upload failed.')
-      return
-    }
-
-    // Step 2: Prepare data for Supabase
     const newReviewer = {
-      user_id: authStore.userData.id, // ✅ Ensure userData is accessible
-      file_name: newReviewerTitle.value,
-      file_path: filePath,
-      description: 'Manual upload via app', // ✏️ Optional field
+      id: reviewersStore.reviewers.length + 1, // ensure unique ID
+      title: newReviewerTitle.value,
+      file: newReviewerFile.value.name,
+      likes: 0,
+      dislikes: 0,
+      uploadedBy: 'You',
     }
 
-    // Step 3: Insert into Supabase
-    const { data, error } = await supabase.from('reviewers').insert([newReviewer]).select()
+    reviewersStore.addReviewer(newReviewer)
 
-    if (error) {
-      console.error('Error inserting into Supabase:', error.message)
-      alert('Database insertion failed.')
-      return
-    }
-
-    // Step 4: Update local Pinia store
-    reviewersStore.reviewers.push(data[0])
-
-    // Step 5: Reset form
     newReviewerTitle.value = ''
     newReviewerFile.value = null
   } catch (err) {
@@ -92,12 +70,12 @@ async function uploadReviewer() {
 }
 
 function likeReviewer(id) {
-  const reviewer = reviewers.find((r) => r.id === id)
+  const reviewer = reviewer.find((r) => r.id === id)
   if (reviewer) reviewer.likes++
 }
 
 function dislikeReviewer(id) {
-  const reviewer = reviewers.find((r) => r.id === id)
+  const reviewer = reviewer.find((r) => r.id === id)
   if (reviewer) reviewer.dislikes++
 }
 
@@ -107,7 +85,7 @@ function downloadReviewer(fileName) {
 
 function deleteReviewerById(id) {
   if (confirm('Are you sure you want to delete this reviewer?')) {
-    reviewersStore.deleteReviewer(id) // ✅ Use the method from the Pinia store
+    reviewersStore.deleteReviewer(id)
   }
 }
 </script>
@@ -161,22 +139,6 @@ function deleteReviewerById(id) {
               <v-card-subtitle class="text-gray-500 mb-2">
                 Uploaded by: {{ reviewer.user_id }}
               </v-card-subtitle>
-
-              <v-card-text>
-                <div class="text-gray-600 mb-4">File: {{ reviewer.file }}</div>
-
-                <div class="d-flex align-center justify-center mb-4">
-                  <v-btn icon @click="likeReviewer(reviewer.id)">
-                    <v-icon color="green">mdi-thumb-up</v-icon>
-                  </v-btn>
-                  <span class="mr-4">{{ reviewer.likes }}</span>
-
-                  <v-btn icon @click="dislikeReviewer(reviewer.id)">
-                    <v-icon color="red">mdi-thumb-down</v-icon>
-                  </v-btn>
-                  <span>{{ reviewer.dislikes }}</span>
-                </div>
-              </v-card-text>
 
               <v-card-actions class="justify-end">
                 <v-row dense wrap class="w-100">

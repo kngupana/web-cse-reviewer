@@ -36,6 +36,7 @@ export const useReviewersStore = defineStore('reviewers', () => {
     const response = await axios.get('https://api.restful-api.dev/objects')
     reviewersFromApi.value = response.data
 
+    // Delete previous reviewers in Supabase
     await supabase.from('reviewers').delete().neq('id', 0)
 
     const transformedData = reviewersFromApi.value.map((r) => ({
@@ -43,31 +44,15 @@ export const useReviewersStore = defineStore('reviewers', () => {
       file_name: r.name,
       file_path: r.data?.path ?? '',
       description: r.data?.description ?? '',
-      uploaded_by: authStore.userData.username || 'Unknown', // Ensure uploaded_by field is filled
     }))
 
-    const { data, error } = await supabase
-      .from('reviewers')
-      .select('id, file_name, file_path, description, likes, dislikes')
-
-    if (error) {
-      console.error('Error inserting reviewers into Supabase:', error.message)
-      return
-    }
-
-    // Add the new reviewers into the local store
-    reviewers.value = [...reviewers.value, ...data]
+    const { data } = await supabase.from('reviewers').insert(transformedData).select()
+    if (data) await addReviewers()
   }
 
-  async function addReviewers(newReviewer) {
-    const { data, error } = await supabase.from('reviewers').insert([newReviewer]).select()
-
-    if (error) {
-      console.error('Error inserting reviewer into Supabase:', error.message)
-      return
-    }
-
-    reviewers.value.push(data[0]) // Add the inserted reviewer to the store
+  async function addReviewers() {
+    const { data } = await supabase.from('reviewers').select('*')
+    reviewers.value = data
   }
 
   function likeReviewer(id) {
