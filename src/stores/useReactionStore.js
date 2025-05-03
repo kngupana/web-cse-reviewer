@@ -4,12 +4,10 @@ import { ref } from 'vue'
 import { supabase } from '@/utils/supabase'
 
 export const useReactionStore = defineStore('reaction', () => {
-  // State
   const reactions = ref([])
 
-  // Fetch all reactions
   async function fetchReactions() {
-    const { data, error } = await supabase.from('reaction').select('*')
+    const { data, error } = await supabase.from('reactions').select('*')
     if (error) {
       console.error('Error fetching reactions:', error.message)
       return
@@ -28,7 +26,7 @@ export const useReactionStore = defineStore('reaction', () => {
     }
 
     const { data, error } = await supabase
-      .from('reaction')
+      .from('reactions')
       .insert([{ reviewer_id: reviewerId, user_id: user.id, type }])
       .select()
 
@@ -40,10 +38,9 @@ export const useReactionStore = defineStore('reaction', () => {
     reactions.value.push(data[0])
   }
 
-  // Remove a user's reaction to a reviewer
   async function removeReaction(reviewerId, userId) {
     const { error } = await supabase
-      .from('reaction')
+      .from('reactions')
       .delete()
       .eq('reviewer_id', reviewerId)
       .eq('user_id', userId)
@@ -58,12 +55,10 @@ export const useReactionStore = defineStore('reaction', () => {
     )
   }
 
-  // Get total likes or dislikes for a reviewer
   function getReactionCount(reviewerId, type) {
     return reactions.value.filter((r) => r.reviewer_id === reviewerId && r.type === type).length
   }
 
-  // Check if a user has reacted to a reviewer
   function getUserReaction(reviewerId, userId) {
     return reactions.value.find((r) => r.reviewer_id === reviewerId && r.user_id === userId)
   }

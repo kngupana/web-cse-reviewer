@@ -2,31 +2,30 @@
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 
-import { ref } from 'vue'
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useReviewersStore } from '@/stores/useReviewersStore'
-//import { supabase } from '@/utils/supabase'
+import { uploadFile } from '@/utils/uploadService'
+import { supabase } from '@/utils/supabase'
+import { useAuthUserStore } from '@/stores/authUser'
 
+const authStore = useAuthUserStore()
 const isDrawerVisible = ref(true)
 const newReviewerTitle = ref('')
 const newReviewerFile = ref(null)
 
-// Pinia store
 const reviewersStore = useReviewersStore()
 const reviewers = reviewersStore.reviewers
-//const onRetrieveFromApi = async () => {
-//await reviewersStore.addReviewersFromApi()
-//}
 
 onMounted(async () => {
-  const isAuthenticated = await authStore.isAuthenticated()
-  if (!isAuthenticated) {
-    alert('You must be logged in to upload a reviewer.')
+  const isLoggedIn = await authStore.isAuthenticated()
+  if (!isLoggedIn) {
+    alert('You must be logged in to upload reviewers.')
     return
   }
 
-  // Fetch reviewers
-  await reviewersStore.loadReviewersFromSupabase()
+  if (reviewersStore.reviewers.length === 0) {
+    await reviewersStore.addReviewers()
+  }
 })
 
 function handleFileChange(event) {
@@ -34,53 +33,54 @@ function handleFileChange(event) {
 }
 
 async function uploadReviewer() {
-  if (!authStore.userData) {
-    // Ensure user is authenticated before proceeding
-    await authStore.isAuthenticated() // Call isAuthenticated to ensure we have the user data
-
-    if (!authStore.userData) {
-      alert('You need to be logged in to upload a reviewer.')
-      return
-    }
-  }
-
   if (!newReviewerTitle.value || !newReviewerFile.value) {
     alert('Please provide both title and file.')
     return
   }
 
+  const userId = authStore.userData?.id
+  if (!userId) {
+    alert('User not found. Please log in again.')
+    return
+  }
+
   try {
-    const newReviewer = {
-      id: reviewersStore.reviewers.length + 1, // ensure unique ID
-      title: newReviewerTitle.value,
-      file: newReviewerFile.value.name,
-      likes: 0,
-      dislikes: 0,
-      uploadedBy: 'You',
+    const fileUrl = await uploadFile(newReviewerFile.value)
+
+    if (!fileUrl) {
+      alert('File upload failed.')
+      return
     }
 
-    reviewersStore.addReviewer(newReviewer)
+    const { data, error } = await supabase.from('reviewers').insert([
+      {
+        user_id: userId,
+        file_name: newReviewerTitle.value,
+        file_path: fileUrl,
+        description: '',
+      }
+    ])
+
+    if (error) {
+      console.error('Error saving to Supabase:', error)
+      alert('Failed to save reviewer to database.')
+      return
+    }
+
+    await reviewersStore.addReviewers()
 
     newReviewerTitle.value = ''
     newReviewerFile.value = null
-  } catch (err) {
-    console.error('Unexpected error:', err)
-    alert('Something went wrong during upload.')
+
+    alert('Reviewer uploaded successfully!')
+  } catch (error) {
+    console.error('Upload error:', error)
+    alert('Something went wrong while uploading.')
   }
 }
 
-function likeReviewer(id) {
-  const reviewer = reviewer.find((r) => r.id === id)
-  if (reviewer) reviewer.likes++
-}
-
-function dislikeReviewer(id) {
-  const reviewer = reviewer.find((r) => r.id === id)
-  if (reviewer) reviewer.dislikes++
-}
-
-function downloadReviewer(fileName) {
-  alert(`Downloading: ${fileName}`)
+function downloadReviewer(fileUrl) {
+  window.open(fileUrl, '_blank')
 }
 
 function deleteReviewerById(id) {
@@ -89,6 +89,7 @@ function deleteReviewerById(id) {
   }
 }
 </script>
+  
 
 <template>
   <AppLayout
@@ -101,7 +102,7 @@ function deleteReviewerById(id) {
 
     <template #content>
       <v-container fluid class="py-6">
-        <!-- Upload Section -->
+        Upload Section
         <v-card class="pa-6 mb-10 hover:shadow-lg transition-all">
           <h1 class="text-2xl font-bold mb-4">Upload Your Reviewer</h1>
 
@@ -130,51 +131,32 @@ function deleteReviewerById(id) {
         <h2 class="text-2xl font-bold mb-4">Uploaded Reviewers</h2>
 
         <v-row dense>
-          <v-col v-for="reviewer in reviewers" :key="reviewer.id" cols="12" sm="12" md="6" lg="4">
+          <v-col v-for="reviewer in reviewers" :key="reviewer.id" cols="12" md="6" lg="4">
             <v-card class="pa-4 hover:shadow-md transition-all">
               <v-card-title class="font-bold text-primary">
-                {{ reviewer.file_name }}
+                {{ reviewer.title }}
               </v-card-title>
 
               <v-card-subtitle class="text-gray-500 mb-2">
-                Uploaded by: {{ reviewer.user_id }}
+                Uploaded by: {{ reviewer.uploadedBy }}
               </v-card-subtitle>
 
               <v-card-actions class="justify-end">
-                <v-row dense wrap class="w-100">
-                  <v-col cols="12" sm="auto">
-                    <v-btn
-                      block
-                      color="primary"
-                      variant="outlined"
-                      @click="downloadReviewer(reviewer.file)"
-                    >
-                      View
-                    </v-btn>
-                  </v-col>
+                <v-btn color="primary" variant="outlined" @click="downloadReviewer(reviewer.file)">
+                  View
+                </v-btn>
+                <v-btn color="primary" variant="outlined" @click="downloadReviewer(reviewer.file)">
+                 Download
+                </v-btn>
 
-                  <v-col cols="12" sm="auto">
-                    <v-btn
-                      block
-                      color="primary"
-                      variant="outlined"
-                      @click="downloadReviewer(reviewer.file)"
-                    >
-                      Download
-                    </v-btn>
-                  </v-col>
-
-                  <v-col cols="12" sm="auto" v-if="reviewer.uploadedBy === 'You'">
-                    <v-btn
-                      block
-                      color="error"
-                      variant="text"
-                      @click="deleteReviewerById(reviewer.id)"
-                    >
-                      Delete
-                    </v-btn>
-                  </v-col>
-                </v-row>
+                <v-btn
+                  color="error"
+                  variant="text"
+                  v-if="reviewer.uploadedBy === 'You'"
+                  @click="deleteReviewerById(reviewer.id)"
+                >
+                  Delete
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -201,16 +183,5 @@ function deleteReviewerById(id) {
 }
 .transition-all {
   transition: all 0.3s ease;
-}
-
-/* Ensure responsiveness */
-@media (max-width: 600px) {
-  h1,
-  h2 {
-    font-size: 1.25rem;
-  }
-  .pa-6 {
-    padding: 1rem !important;
-  }
 }
 </style>
