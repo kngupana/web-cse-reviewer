@@ -2,7 +2,7 @@
 import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref, onMounted } from 'vue'
-import {  getUserInformation, } from '@/utils/supabase'
+import { getUserInformation } from '@/utils/supabase'
 import { getAvatarText } from '@/utils/helpers'
 
 const isDrawerVisible = ref(true)
@@ -11,9 +11,8 @@ const isEditDialogOpen = ref(false)
 const userData = ref({
   initials: '',
   email: '',
-  fullname: ''
+  fullname: '',
 })
-
 
 const editedProfile = ref({ ...userData.value })
 
@@ -29,13 +28,12 @@ const saveProfile = async () => {
 }
 
 //Getting User Information Functionality
-const getUser = async() => {
+const getUser = async () => {
   const userMetadata = await getUserInformation()
 
   userData.value.email = userMetadata.email
   userData.value.fullname = userMetadata.firstname + ' ' + userMetadata.lastname
   userData.value.initials = getAvatarText(userData.value.fullname)
-
 }
 
 //Load functions during component rendering
@@ -54,20 +52,25 @@ onMounted(() => {
     </template>
 
     <template #content>
-      <v-container fluid class="py-8">
+      <v-container fluid class="py-8 stylish-bg">
         <v-row align="center" justify="center">
           <v-col cols="12" md="8" lg="6">
-            <v-card class="pa-6 text-center rounded-xl hover:shadow-lg transition-all">
+            <v-card
+              class="profile-card pa-6 text-center rounded-xl hover:shadow-lg transition-all stylish-bg"
+            >
               <v-avatar size="120" class="mx-auto mb-4">
-  <img v-if="userData.avatar" :src="userData.avatar" alt="User Avatar" />
-  <span v-else class="text-h4">{{ userData.initials }}</span>
-</v-avatar>
+                <img v-if="userData.avatar" :src="userData.avatar" alt="User Avatar" />
+                <span v-else class="text-h4">{{ userData.initials }}</span>
+              </v-avatar>
 
-  <h2 class="text-2xl font-bold mb-1">{{ userData.fullname }}</h2>
-  <p class="text-gray-600 mb-2">@{{ userData.username }}</p> <!-- Ensure you define 'username' in userData if needed -->
-  <p class="text-gray-600 mb-2">{{ userData.email }}</p>
+              <h2 class="text-2xl font-bold mb-1">{{ userData.fullname }}</h2>
+              <p class="text-gray-600 mb-2">@{{ userData.username }}</p>
+              <!-- Ensure you define 'username' in userData if needed -->
+              <p class="text-gray-600 mb-2">{{ userData.email }}</p>
 
-              <v-btn color="primary" variant="flat" class="w-full" @click="openEditDialog">Edit Profile</v-btn>
+              <v-btn color="primary" variant="flat" class="w-full" @click="openEditDialog"
+                >Edit Profile</v-btn
+              >
             </v-card>
           </v-col>
         </v-row>
@@ -94,13 +97,32 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.stylish-bg {
+  background: linear-gradient(135deg, #d4a5f9, #f3e6f5); /* Vibrant gradient */
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1); /* Enhanced shadow for elevation */
+}
+.profile-card {
+  background: linear-gradient(135deg, #d4a5f9, #f3e6f5); /* Vibrant gradient */
+  border-radius: 24px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1); /* Enhanced shadow for elevation */
+  transition: transform 0.3s ease;
+}
+
+.profile-card:hover {
+  transform: scale(1.01);
+}
+
 .text-gray-600 {
   color: #4b5563;
 }
+
 .hover\:shadow-lg:hover {
   box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
+
 .rounded-xl {
   border-radius: 1rem;
 }
