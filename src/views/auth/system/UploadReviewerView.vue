@@ -3,24 +3,17 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 
 import { ref } from 'vue'
-//import VueApexCharts from 'vue3-apexcharts'
-//import { useRouter } from 'vue-router'
-
 import { onMounted } from 'vue'
 import { useReviewersStore } from '@/stores/useReviewersStore'
-//import { supabase } from '@/utils/supabase'
+import { uploadFile } from '@/utils/uploadService'  // Import the file upload function
 
 const isDrawerVisible = ref(true)
 const newReviewerTitle = ref('')
 const newReviewerFile = ref(null)
 
-
 // Pinia store
 const reviewersStore = useReviewersStore()
 const reviewers = reviewersStore.reviewers
-//const onRetrieveFromApi = async () => {
-//await reviewersStore.addReviewersFromApi()
-//}
 
 onMounted(async () => {
   if (reviewersStore.reviewers.length == 0) await reviewersStore.addReviewers
@@ -37,10 +30,18 @@ async function uploadReviewer() {
   }
 
   try {
+    // Upload the file to Supabase
+    const fileUrl = await uploadFile(newReviewerFile.value)
+
+    if (!fileUrl) {
+      alert('File upload failed.')
+      return
+    }
+
     const newReviewer = {
       id: reviewersStore.reviewers.length + 1, // ensure unique ID
       title: newReviewerTitle.value,
-      file: newReviewerFile.value.name,
+      file: fileUrl,  // Store the file URL instead of file name
       likes: 0,
       dislikes: 0,
       uploadedBy: 'You',
@@ -56,27 +57,15 @@ async function uploadReviewer() {
   }
 }
 
-
-function likeReviewer(id) {
-  const reviewer = reviewer.find((r) => r.id === id)
-  if (reviewer) reviewer.likes++
-}
-
-function dislikeReviewer(id) {
-  const reviewer = reviewer.find((r) => r.id === id)
-  if (reviewer) reviewer.dislikes++
-}
-
-function downloadReviewer(fileName) {
-  alert(`Downloading: ${fileName}`)
+function downloadReviewer(fileUrl) {
+  window.open(fileUrl, '_blank')
 }
 
 function deleteReviewerById(id) {
   if (confirm('Are you sure you want to delete this reviewer?')) {
-    reviewersStore.deleteReviewer(id) // ✅ Use the method from the Pinia store
+    reviewersStore.deleteReviewer(id)
   }
 }
-
 </script>
 
 <template>
@@ -128,22 +117,6 @@ function deleteReviewerById(id) {
               <v-card-subtitle class="text-gray-500 mb-2">
                 Uploaded by: {{ reviewer.uploadedBy }}
               </v-card-subtitle>
-
-              <v-card-text>
-                <div class="text-gray-600 mb-4">File: {{ reviewer.file }}</div>
-
-                <div class="d-flex align-center justify-center mb-4">
-                  <v-btn icon @click="likeReviewer(reviewer.id)">
-                    <v-icon color="green">mdi-thumb-up</v-icon>
-                  </v-btn>
-                  <span class="mr-4">{{ reviewer.likes }}</span>
-
-                  <v-btn icon @click="dislikeReviewer(reviewer.id)">
-                    <v-icon color="red">mdi-thumb-down</v-icon>
-                  </v-btn>
-                  <span>{{ reviewer.dislikes }}</span>
-                </div>
-              </v-card-text>
 
               <v-card-actions class="justify-end">
                 <v-btn color="primary" variant="outlined" @click="downloadReviewer(reviewer.file)">

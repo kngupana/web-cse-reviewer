@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { supabase } from '@/utils/supabase'
 import { useAuthUserStore } from './authUser'
-
+import { uploadFile } from '@/utils/uploadService' // Make sure the uploadFile function is imported
 
 export const useReviewersStore = defineStore('reviewers', () => {
   const authStore = useAuthUserStore()
@@ -23,23 +23,54 @@ export const useReviewersStore = defineStore('reviewers', () => {
     const response = await axios.get('https://api.restful-api.dev/objects')
     reviewersFromApi.value = response.data
 
+    // Delete previous reviewers in Supabase
     await supabase.from('reviewers').delete().neq('id', 0)
 
-    const transformedData = reviewersFromApi.value.map(r => ({
-      user_id: authStore.userData.id,
-      file_name: r.name,
-      file_path: r.data?. path ?? '',
-      description: r.data?.description ?? '',
+    const transformedData = []
 
-    }))
+    for (const r of reviewersFromApi.value) {
+      const file = r.data?.file // assuming r.data.file contains the file object or file path
+      let fileUrl = ''
 
-    const { data } = await supabase.from('reviewers').insert(transformedData).select()
-    if (data) await addReviewers()
+      if (file) {
+        try {
+          // Upload the file to Supabase and get the URL
+          const uploadedFileUrl = await uploadFile(file)
+          if (uploadedFileUrl) {
+            fileUrl = uploadedFileUrl
+          } else {
+            console.error(`Failed to upload file for ${r.name}`)
+            continue // Skip this reviewer if file upload fails
+          }
+        } catch (error) {
+          console.error('Error uploading file:', error)
+          continue // Skip this reviewer if there's an error during upload
+        }
+      }
+
+      transformedData.push({
+        user_id: authStore.userData.id,
+        file_name: r.name,
+        file_path: fileUrl,  // store the file URL
+        description: r.data?.description ?? '',
+      })
+    }
+
+    // Insert reviewers into Supabase
+    const { data, error } = await supabase.from('reviewers').insert(transformedData).select()
+
+    if (data) {
+      // If data insertion is successful, update the state
+      await addReviewers()
+    } else {
+      console.error('Error inserting reviewers:', error)
+    }
   }
 
   async function addReviewers() {
-    const { data } = await supabase.from('reviewers').select('*')
-    reviewers.value = data
+    const { data, error } = await supabase.from('reviewers').select('*')
+    if (data) reviewers.value = data
+    if (error) console.error('Error fetching reviewers:', error)
   }
 
   function likeReviewer(id) {
@@ -63,7 +94,6 @@ export const useReviewersStore = defineStore('reviewers', () => {
       reviewers.value = [newReviewer]
     }
   }
-
 
   return {
     reviewersFromApi,
