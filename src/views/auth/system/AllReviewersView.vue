@@ -167,8 +167,10 @@ function downloadReviewer(fileUrl) {
   box-shadow: 0 8px 16px rgba(30, 58, 138, 0.15);
 }
 .reviewer-container {
-  background: linear-gradient(to bottom, #f0f4ff, #ffffff);
-  transition: background-color 0.3s ease;
+  background: linear-gradient(135deg, #b6a9d6 0%, #cbbce7 100%);
+  min-height: 100vh;
+  background-attachment: fixed;
+  position: relative;
 }
 
 .v-theme--dark .reviewer-container {
