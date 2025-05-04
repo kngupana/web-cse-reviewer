@@ -37,7 +37,7 @@
 
       <v-divider class="my-3"></v-divider>
 
-      <v-list-item prepend-icon="mdi-account" title="Profile" to="/profile" class="nav-item" />
+      
 
       <v-list-item prepend-icon="mdi-cogs" title="Settings" to="/settings" class="nav-item" />
     </v-list>

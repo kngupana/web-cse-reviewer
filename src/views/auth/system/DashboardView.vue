@@ -43,7 +43,7 @@
                   class="pa-6 d-flex flex-column justify-center align-center fact-item"
                   style="
                     background: linear-gradient(to right, #e6e6fa, #f3f4f7);
-                    border-radius: 12px;
+                    border-radius: 10px;
                     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
                   "
                 >
@@ -237,7 +237,7 @@ const reminders = ref([
 /* General Layout Styles */
 .stylish-bg {
   background: linear-gradient(135deg, #d4a5f9, #f3e6f5); /* Vibrant gradient */
-  border-radius: 24px;
+  border-radius: 3px;
   padding: 20px;
   box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1); /* Enhanced shadow for elevation */
 }
