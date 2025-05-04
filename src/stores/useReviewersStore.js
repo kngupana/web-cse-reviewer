@@ -1,4 +1,3 @@
-
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
@@ -52,7 +51,7 @@ export const useReviewersStore = defineStore('reviewers', () => {
       transformedData.push({
         user_id: authStore.userData.id,
         file_name: r.name,
-        file_path: fileUrl,  // store the file URL
+        file_path: fileUrl, // store the file URL
         description: r.data?.description ?? '',
       })
     }
@@ -72,13 +71,13 @@ export const useReviewersStore = defineStore('reviewers', () => {
     const { data, error } = await supabase.from('reviewers').select('*')
 
     if (data) {
-      reviewers.value = data.map(r => ({
+      reviewers.value = data.map((r) => ({
         id: r.id,
-        title: r.file_name,              // match what your UI expects
+        title: r.file_name, // match what your UI expects
         file: r.file_path,
-        uploadedBy: 'You',               // optional: get user name from authStore
+        uploadedBy: 'You', // optional: get user name from authStore
         likes: 0,
-        dislikes: 0
+        dislikes: 0,
       }))
     }
 
@@ -88,17 +87,17 @@ export const useReviewersStore = defineStore('reviewers', () => {
   }
 
   function likeReviewer(id) {
-    const reviewer = reviewers.value.find(r => r.id === id)
+    const reviewer = reviewers.value.find((r) => r.id === id)
     if (reviewer) reviewer.likes++
   }
 
   function dislikeReviewer(id) {
-    const reviewer = reviewers.value.find(r => r.id === id)
+    const reviewer = reviewers.value.find((r) => r.id === id)
     if (reviewer) reviewer.dislikes++
   }
 
   function deleteReviewer(id) {
-    reviewers.value = reviewers.value.filter(r => r.id !== id)
+    reviewers.value = reviewers.value.filter((r) => r.id !== id)
   }
 
   function addReviewer(newReviewer) {
@@ -118,6 +117,6 @@ export const useReviewersStore = defineStore('reviewers', () => {
     likeReviewer,
     dislikeReviewer,
     deleteReviewer,
-    addReviewer
+    addReviewer,
   }
 })

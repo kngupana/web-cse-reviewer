@@ -58,7 +58,7 @@ async function uploadReviewer() {
         file_name: newReviewerTitle.value,
         file_path: fileUrl,
         description: '',
-      }
+      },
     ])
 
     if (error) {
@@ -89,7 +89,6 @@ function deleteReviewerById(id) {
   }
 }
 </script>
-  
 
 <template>
   <AppLayout
@@ -146,7 +145,7 @@ function deleteReviewerById(id) {
                   View
                 </v-btn>
                 <v-btn color="primary" variant="outlined" @click="downloadReviewer(reviewer.file)">
-                 Download
+                  Download
                 </v-btn>
 
                 <v-btn
