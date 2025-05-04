@@ -98,7 +98,7 @@ function downloadReviewer(fileUrl) {
 
     <template #content>
       <v-container fluid class="py-6">
-        Upload Section
+      
         <v-card class="pa-6 mb-10 hover:shadow-lg transition-all">
           <h1 class="text-2xl font-bold mb-4">Upload Your Reviewer</h1>
 
