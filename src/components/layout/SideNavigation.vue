@@ -37,6 +37,15 @@
         <v-list-item-title>All Reviewers</v-list-item-title>
       </v-list-item>
 
+
+
+      <v-list-item to="/reviewers" class="nav-item">
+        <template #prepend>
+          <v-icon color="pink-darken-2">mdi-file-document</v-icon>
+        </template>
+        <v-list-item-title>All Reviewers</v-list-item-title>
+      </v-list-item>
+
       <v-divider class="my-3"></v-divider>
 
       <v-list-item to="/settings" class="nav-item">
@@ -61,12 +70,20 @@ defineProps({
 </script>
 
 <style scoped>
+
+
+
+
 .logo-image {
   width: 48px;
   height: 48px;
   object-fit: contain;
   margin: 0 auto;
 }
+
+
+
+
 
 .custom-drawer {
   background: linear-gradient(to bottom, #2e1065, #4b0082);

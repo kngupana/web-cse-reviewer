@@ -222,7 +222,11 @@ function downloadReviewer(fileUrl) {
   font-size: 28px;
   font-weight: 700;
   font-family: 'Montserrat', sans-serif;
+
   background: linear-gradient(135deg, #b175e1 0%, #3b8bd5 100%);
+
+  background: linear-gradient(135deg, #63aff6 100%);
+
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
