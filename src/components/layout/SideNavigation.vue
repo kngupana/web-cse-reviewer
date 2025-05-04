@@ -38,15 +38,8 @@
       </v-list-item>
 
 
-
-      <v-list-item to="/reviewers" class="nav-item">
-        <template #prepend>
-          <v-icon color="pink-darken-2">mdi-file-document</v-icon>
-        </template>
-        <v-list-item-title>All Reviewers</v-list-item-title>
-      </v-list-item>
-
       <v-divider class="my-3"></v-divider>
+
 
       <v-list-item to="/settings" class="nav-item">
         <template #prepend>
@@ -54,6 +47,7 @@
         </template>
         <v-list-item-title>Settings</v-list-item-title>
       </v-list-item>
+
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -70,7 +64,6 @@ defineProps({
 </script>
 
 <style scoped>
-
 
 
 

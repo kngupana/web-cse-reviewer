@@ -37,13 +37,13 @@ const isDrawerVisible = ref(mobile.value ? false : true)
 
     <template #content>
       <!-- Vibrant purple background -->
-      <div class="purple-background">
+      <div class="purple-background ">
         <v-container class="py-8" max-width="700px">
-          <v-card class="pa-8 rounded-xl elevation-4" style="background: rgba(255, 255, 255, 0.96);">
+          <v-card class="pa-8 rounded-xl elevation-4 account-card" style="background: rgba(255, 255, 255, 0.96);">
 
             <!-- Header with gradient icon -->
-            <div class="d-flex align-center mb-6">
-              <div class="icon-gradient-bg mr-4">
+            <div class="d-flex align-center mb-6 ">
+              <div class="icon-gradient-bg mr-4 ">
                 <v-icon icon="mdi-account-cog" size="32" color="white"></v-icon>
               </div>
               <div>
@@ -148,10 +148,9 @@ const isDrawerVisible = ref(mobile.value ? false : true)
 <style scoped>
 /* Bold purple background */
 .purple-background {
-  background: linear-gradient(135deg, #b6a9d6 0%, #cbbce7 100%);
+  background: linear-gradient(135deg, #7b1fa2 0%, #4a148c 100%);
   min-height: 100vh;
-  background-attachment: fixed;
-  position: relative;
+  padding: 20px 0;
 }
 
 /* Gradient icon background */
@@ -205,4 +204,18 @@ const isDrawerVisible = ref(mobile.value ? false : true)
   background: #7b1fa2;
   border-radius: 4px;
 }
+.account-card {
+  background-color: rgba(255, 255, 255, 0.96);
+  transition: background-color 0.3s ease;
+}
+
+/* Vuetify 3 dark mode class */
+.v-theme--dark .account-card {
+  background-color: rgba(18, 18, 18, 0.96);
+}
+.v-theme--dark .account-card {
+  background-color: black !important;
+}
+
+
 </style>
