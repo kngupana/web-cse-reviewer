@@ -14,7 +14,7 @@ const newReviewerTitle = ref('')
 const newReviewerFile = ref(null)
 
 const reviewersStore = useReviewersStore()
-const reviewers = reviewersStore.reviewers
+
 
 onMounted(async () => {
   const isLoggedIn = await authStore.isAuthenticated()
@@ -23,10 +23,10 @@ onMounted(async () => {
     return
   }
 
-  if (reviewersStore.reviewers.length === 0) {
-    await reviewersStore.addReviewers()
-  }
+  // Always fetch reviewers on mount
+  await reviewersStore.addReviewers()
 })
+
 
 function handleFileChange(event) {
   newReviewerFile.value = event.target.files[0]
@@ -71,6 +71,7 @@ async function uploadReviewer() {
 
     newReviewerTitle.value = ''
     newReviewerFile.value = null
+    document.querySelector('input[type="file"]').value = ''
 
     alert('Reviewer uploaded successfully!')
   } catch (error) {
@@ -83,11 +84,7 @@ function downloadReviewer(fileUrl) {
   window.open(fileUrl, '_blank')
 }
 
-function deleteReviewerById(id) {
-  if (confirm('Are you sure you want to delete this reviewer?')) {
-    reviewersStore.deleteReviewer(id)
-  }
-}
+
 </script>
 
 <template>
@@ -130,7 +127,7 @@ function deleteReviewerById(id) {
         <h2 class="text-2xl font-bold mb-4">Uploaded Reviewers</h2>
 
         <v-row dense>
-          <v-col v-for="reviewer in reviewers" :key="reviewer.id" cols="12" md="6" lg="4">
+          <v-col v-for="reviewer in reviewersStore.reviewers" :key="reviewer.id" cols="12" md="6" lg="4">
             <v-card class="pa-4 hover:shadow-md transition-all">
               <v-card-title class="font-bold text-primary">
                 {{ reviewer.title }}

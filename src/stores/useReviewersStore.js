@@ -68,9 +68,11 @@ export const useReviewersStore = defineStore('reviewers', () => {
   }
 
   async function addReviewers() {
+    
     const { data, error } = await supabase.from('reviewers').select('*')
 
     if (data) {
+      console.log('Fetched reviewers:', data)
       reviewers.value = data.map((r) => ({
         id: r.id,
         title: r.file_name, // match what your UI expects
