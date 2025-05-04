@@ -84,10 +84,9 @@ function downloadReviewer(fileUrl) {
 
     <template #content>
       <v-container
-        fluid
-        class="py-10 px-4"
-        style="background: linear-gradient(to bottom, #f0f4ff, #ffffff)"
-      >
+      fluid
+  class="py-10 px-4 reviewer-container"
+>
         <h1 class="text-3xl font-bold mb-8 text-center" style="color: #1e3a8a">
           📚 CSE Reviewer Library
         </h1>
@@ -167,4 +166,35 @@ function downloadReviewer(fileUrl) {
   transform: translateY(-4px);
   box-shadow: 0 8px 16px rgba(30, 58, 138, 0.15);
 }
+.reviewer-container {
+  background: linear-gradient(to bottom, #f0f4ff, #ffffff);
+  transition: background-color 0.3s ease;
+}
+
+.v-theme--dark .reviewer-container {
+  background: linear-gradient(to bottom, #1a1a2e, #121212);
+}
+
+.reviewer-card {
+  background: linear-gradient(to right, #eef2ff, #ffffff);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+.reviewer-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(30, 58, 138, 0.15);
+}
+
+.v-theme--dark .reviewer-card {
+  background: linear-gradient(to right, #2a2a3d, #1e1e2e);
+  color: #ffffff;
+  box-shadow: 0 8px 16px rgba(255, 255, 255, 0.05);
+}
+
+.v-theme--dark .text-indigo-900,
+.v-theme--dark .text-gray-600,
+.v-theme--dark .text-green-700,
+.v-theme--dark .text-red-700 {
+  color: #ffffff !important;
+}
+
 </style>

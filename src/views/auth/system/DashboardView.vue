@@ -1,3 +1,86 @@
+
+<script setup>
+import AppLayout from '@/components/layout/AppLayout.vue'
+import SideNavigation from '@/components/layout/SideNavigation.vue'
+import { ref } from 'vue'
+
+
+const isDrawerVisible = ref(true)
+
+const quotes = ref([
+  {
+    text: 'Success usually comes to those who are too busy to be looking for it.',
+    author: 'Henry David Thoreau',
+  },
+  { text: 'Don’t watch the clock; do what it does. Keep going.', author: 'Sam Levenson' },
+  { text: 'Push yourself, because no one else is going to do it for you.', author: 'Anonymous' },
+  { text: 'It always seems impossible until it’s done.', author: 'Nelson Mandela' },
+  { text: "Believe you can and you're halfway there.", author: 'Theodore Roosevelt' },
+  { text: 'Hard work beats talent when talent doesn’t work hard.', author: 'Tim Notke' },
+])
+
+const currentQuote = ref(quotes.value[0])
+
+function getRandomQuote() {
+  const randomIndex = Math.floor(Math.random() * quotes.value.length)
+  currentQuote.value = quotes.value[randomIndex]
+}
+
+const facts = ref([
+  'The CSE Professional exam has 170 items and lasts 3 hours and 10 minutes.',
+  'Coverage includes Verbal, Numerical, Analytical, and General Information.',
+  'You must get at least 80% to pass the Civil Service Exam.',
+  'Review common math shortcuts to save time on exam day.',
+  'Be familiar with the Philippine Constitution and Code of Conduct for Public Officials.',
+])
+
+const promos = ref([
+  {
+    title: 'Early Bird Discount!',
+    description: 'Sign up for review sessions and get a 20% discount on all packages.',
+    link: '/promos/early-bird',
+  },
+  {
+    title: 'Free Mock Exam!',
+    description: 'Get a free mock exam with every purchase of our premium reviewer bundle.',
+    link: '/promos/free-mock',
+  },
+  {
+    title: 'Refer a Friend',
+    description: 'Refer a friend to our review course and get a voucher for your next purchase.',
+    link: '/promos/refer-a-friend',
+  },
+])
+
+const tips = ref([
+  {
+    title: 'Review Consistently',
+    desc: 'Stay consistent with your studies. Dedicate a set time every day to review your materials.',
+  },
+  {
+    title: 'Take Practice Tests',
+    desc: 'Simulate the exam environment by taking timed practice tests regularly.',
+  },
+  {
+    title: 'Understand the Exam Structure',
+    desc: 'Familiarize yourself with the format of the exam and focus on key topics.',
+  },
+  {
+    title: 'Manage Your Time',
+    desc: 'Master time management during your studies and while taking the exam to avoid rushing.',
+  },
+])
+
+const reminders = ref([
+  'Set a daily review schedule—and stick to it!',
+  'Take at least one timed mock exam each week.',
+  'Focus more on your weak subjects during the final 2 weeks.',
+  'Use flashcards to master government acronyms and laws.',
+  'Don’t forget to take short breaks during long study sessions.',
+  'Sleep well the night before the exam to stay alert.',
+])
+</script>
+
 <template>
   <AppLayout
     :is-with-app-bar-nav-icon="true"
@@ -11,6 +94,7 @@
       <v-container fluid class="py-10 text-center stylish-bg">
         <!-- Top Quote -->
         <v-row justify="center">
+
           <v-col cols="12" md="8">
             <h1 class="text-4xl font-bold mb-4 stylish-title">Your Daily Dose of Motivation</h1>
             <p class="text-lg text-gray-700 mb-8">
@@ -40,13 +124,8 @@
             <v-carousel hide-delimiter-background show-arrows height="200">
               <v-carousel-item v-for="(fact, i) in facts" :key="i">
                 <v-sheet
-                  class="pa-6 d-flex flex-column justify-center align-center fact-item"
-                  style="
-                    background: linear-gradient(to right, #e6e6fa, #f3f4f7);
-                    border-radius: 10px;
-                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-                  "
-                >
+                class="quick-fact-sheet pa-6 d-flex flex-column justify-center align-center"
+                    >
                   <div class="text-lg font-medium text-indigo-800 text-center">{{ fact }}</div>
                 </v-sheet>
               </v-carousel-item>
@@ -152,88 +231,18 @@
   </AppLayout>
 </template>
 
-<script setup>
-import AppLayout from '@/components/layout/AppLayout.vue'
-import SideNavigation from '@/components/layout/SideNavigation.vue'
-import { ref } from 'vue'
-
-const isDrawerVisible = ref(true)
-
-const quotes = ref([
-  {
-    text: 'Success usually comes to those who are too busy to be looking for it.',
-    author: 'Henry David Thoreau',
-  },
-  { text: 'Don’t watch the clock; do what it does. Keep going.', author: 'Sam Levenson' },
-  { text: 'Push yourself, because no one else is going to do it for you.', author: 'Anonymous' },
-  { text: 'It always seems impossible until it’s done.', author: 'Nelson Mandela' },
-  { text: "Believe you can and you're halfway there.", author: 'Theodore Roosevelt' },
-  { text: 'Hard work beats talent when talent doesn’t work hard.', author: 'Tim Notke' },
-])
-
-const currentQuote = ref(quotes.value[0])
-
-function getRandomQuote() {
-  const randomIndex = Math.floor(Math.random() * quotes.value.length)
-  currentQuote.value = quotes.value[randomIndex]
-}
-
-const facts = ref([
-  'The CSE Professional exam has 170 items and lasts 3 hours and 10 minutes.',
-  'Coverage includes Verbal, Numerical, Analytical, and General Information.',
-  'You must get at least 80% to pass the Civil Service Exam.',
-  'Review common math shortcuts to save time on exam day.',
-  'Be familiar with the Philippine Constitution and Code of Conduct for Public Officials.',
-])
-
-const promos = ref([
-  {
-    title: 'Early Bird Discount!',
-    description: 'Sign up for review sessions and get a 20% discount on all packages.',
-    link: '/promos/early-bird',
-  },
-  {
-    title: 'Free Mock Exam!',
-    description: 'Get a free mock exam with every purchase of our premium reviewer bundle.',
-    link: '/promos/free-mock',
-  },
-  {
-    title: 'Refer a Friend',
-    description: 'Refer a friend to our review course and get a voucher for your next purchase.',
-    link: '/promos/refer-a-friend',
-  },
-])
-
-const tips = ref([
-  {
-    title: 'Review Consistently',
-    desc: 'Stay consistent with your studies. Dedicate a set time every day to review your materials.',
-  },
-  {
-    title: 'Take Practice Tests',
-    desc: 'Simulate the exam environment by taking timed practice tests regularly.',
-  },
-  {
-    title: 'Understand the Exam Structure',
-    desc: 'Familiarize yourself with the format of the exam and focus on key topics.',
-  },
-  {
-    title: 'Manage Your Time',
-    desc: 'Master time management during your studies and while taking the exam to avoid rushing.',
-  },
-])
-
-const reminders = ref([
-  'Set a daily review schedule—and stick to it!',
-  'Take at least one timed mock exam each week.',
-  'Focus more on your weak subjects during the final 2 weeks.',
-  'Use flashcards to master government acronyms and laws.',
-  'Don’t forget to take short breaks during long study sessions.',
-  'Sleep well the night before the exam to stay alert.',
-])
-</script>
 
 <style scoped>
+/* Card style for dark mode */
+:deep(.v-card) {
+  transition: background-color 0.3s ease;
+}
+
+:deep(.v-card.dark-mode) {
+  background-color: #4b0082 !important;
+  color: white !important;
+}
+
 /* General Layout Styles */
 .stylish-bg {
   background: linear-gradient(135deg, #d4a5f9, #f3e6f5); /* Vibrant gradient */
@@ -367,7 +376,7 @@ const reminders = ref([
 
 /* Tip Card Styling */
 .tip-card {
-  background: linear-gradient(135deg, #ffddc1, #e6e6fa); /* Soft pastel gradient */
+  background: #f3e6f5;
   border-radius: 15px;
   padding: 25px;
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1);
@@ -389,4 +398,46 @@ const reminders = ref([
 .hover\:scale-105:hover {
   transform: scale(1.05); /* Scaling effect on hover */
 }
+.quick-fact-sheet {
+  background-color: #e6e6fa;
+  color: #4b0082;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.v-theme--dark .quick-fact-sheet {
+  background-color: #a95ccf; /* A darker lavender for dark mode */
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
+}
+
+
+/* DARK MODE OVERRIDES */
+.v-theme--dark .quote-card,
+.v-theme--dark .promo-card,
+.v-theme--dark .card-feature,
+.v-theme--dark .tip-card,
+.v-theme--dark .reminder-card {
+  background-color: #4b0082 !important;
+  color: white !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.v-theme--dark .stylish-title {
+  color: #e0b3ff !important; /* Light purple for visibility */
+}
+
+.v-theme--dark .stylish-bg {
+  background: linear-gradient(135deg, #4d0e85, #8140b6);
+}
+
+.v-theme--dark .text-gray-700,
+.v-theme--dark .text-indigo-800,
+.v-theme--dark .text-indigo-600,
+.v-theme--dark .text-orange-600,
+.v-theme--dark .text-teal-800 {
+  color: #ffffff !important;
+}
+
 </style>
