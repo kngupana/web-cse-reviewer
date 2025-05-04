@@ -6,7 +6,6 @@
     dark
     class="custom-drawer"
   >
-
   <br>
   <v-list dense nav>
   <v-list-item class="text-center mb-6">
