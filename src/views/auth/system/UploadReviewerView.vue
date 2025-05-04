@@ -159,7 +159,7 @@ function downloadReviewer(fileUrl) {
                   <v-icon size="22" class="mr-3 file-icon">mdi-file-document</v-icon>
                   <span class="title-text text-truncate">{{ reviewer.title }}</span>
                 </v-card-title>
-
+                
                 <div class="time-info mb-3">
                   <v-icon size="16" class="mr-1 time-icon">mdi-clock-outline</v-icon>
                   <span class="text-caption">Added {{ new Date().toLocaleDateString() }}</span>
@@ -175,7 +175,7 @@ function downloadReviewer(fileUrl) {
                     <v-icon size="18" class="mr-1">mdi-eye-outline</v-icon>
                     View
                   </v-btn>
-
+                  
                   <v-btn
                     variant="elevated"
                     color="accent"
@@ -211,7 +211,7 @@ function downloadReviewer(fileUrl) {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image:
+  background-image: 
     radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.05) 0%, transparent 15%),
     radial-gradient(circle at 85% 85%, rgba(255, 255, 255, 0.05) 0%, transparent 15%);
   pointer-events: none;
@@ -222,7 +222,11 @@ function downloadReviewer(fileUrl) {
   font-size: 28px;
   font-weight: 700;
   font-family: 'Montserrat', sans-serif;
-  background: linear-gradient(135deg, #a88fbd 0%, #a4c5e3 100%);
+
+  background: linear-gradient(135deg, #b175e1 0%, #3b8bd5 100%);
+
+  background: linear-gradient(135deg, #63aff6 100%);
+
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
