@@ -3,7 +3,6 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import { ref, onMounted } from 'vue'
 import { useReactionStore } from '@/stores/useReactionStore'
-//import { useReviewersStore } from '@/stores/useReviewersStore' // if needed
 import { supabase } from '@/utils/supabase'
 
 const isDrawerVisible = ref(true)
@@ -13,13 +12,23 @@ const reactionStore = useReactionStore()
 
 const reviewers = ref([])
 
-// Mock user ID for demo
-const userId = 'user-123'
+// User authentication state
+const userId = ref(null)
 
-// Load reactions when component mounts
+// Load reactions and authenticate user when component mounts
 onMounted(async () => {
+  // Check if the user is authenticated
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    console.error('User not authenticated')
+    return
+  }
+  userId.value = user.id
+
+  // Fetch reactions
   await reactionStore.fetchReactions()
 
+  // Fetch reviewers
   const { data, error } = await supabase.from('reviewers').select('*')
   if (error) {
     console.error('Error fetching reviewers:', error.message)
@@ -28,30 +37,33 @@ onMounted(async () => {
   }
 })
 
+// Like a reviewer
 function likeReviewer(reviewerId) {
-  const existing = reactionStore.getUserReaction(reviewerId, userId)
+  const existing = reactionStore.getUserReaction(reviewerId, userId.value)
   if (!existing) {
-    reactionStore.addReaction(reviewerId, userId, 'like')
+    reactionStore.addReaction(reviewerId, 'like')
   } else if (existing.type === 'dislike') {
-    reactionStore.removeReaction(reviewerId, userId)
-    reactionStore.addReaction(reviewerId, userId, 'like')
+    reactionStore.removeReaction(reviewerId, userId.value)
+    reactionStore.addReaction(reviewerId, 'like')
   } else {
-    reactionStore.removeReaction(reviewerId, userId)
+    reactionStore.removeReaction(reviewerId, userId.value)
   }
 }
 
+// Dislike a reviewer
 function dislikeReviewer(reviewerId) {
-  const existing = reactionStore.getUserReaction(reviewerId, userId)
+  const existing = reactionStore.getUserReaction(reviewerId, userId.value)
   if (!existing) {
-    reactionStore.addReaction(reviewerId, userId, 'dislike')
+    reactionStore.addReaction(reviewerId, 'dislike')
   } else if (existing.type === 'like') {
-    reactionStore.removeReaction(reviewerId, userId)
-    reactionStore.addReaction(reviewerId, userId, 'dislike')
+    reactionStore.removeReaction(reviewerId, userId.value)
+    reactionStore.addReaction(reviewerId, 'dislike')
   } else {
-    reactionStore.removeReaction(reviewerId, userId)
+    reactionStore.removeReaction(reviewerId, userId.value)
   }
 }
 
+// Handle download action
 function downloadReviewer(fileName) {
   alert(`Downloading: ${fileName}`)
 }
@@ -121,7 +133,7 @@ function downloadReviewer(fileName) {
                     View
                   </v-btn>
                   <v-btn color="indigo" variant="tonal" @click="downloadReviewer(reviewer.file)">
-                   Download
+                    Download
                   </v-btn>
                 </div>
               </v-card-text>
