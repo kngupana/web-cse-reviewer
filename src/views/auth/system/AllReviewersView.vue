@@ -109,7 +109,7 @@ function downloadReviewer(fileName) {
               <v-card-text>
                 <p class="text-gray-600 mb-3">
                   <v-icon size="18" color="indigo">mdi-file-document</v-icon>
-                  {{ reviewer.file }}
+                  {{ reviewer.file_name }}
                 </p>
 
                 <div class="d-flex justify-space-between align-center">
