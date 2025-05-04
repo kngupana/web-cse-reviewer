@@ -39,7 +39,13 @@
 
 
 
-      <v-list-item prepend-icon="mdi-cogs" title="Account Settings" to="/settings" class="nav-item" />
+      <v-list-item
+  :to="{ path: '/settings' }"
+  prepend-icon="mdi-cogs"
+  title="Account Settings"
+  class="nav-item"
+/>
+
     </v-list>
   </v-navigation-drawer>
 </template>
