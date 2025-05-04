@@ -8,6 +8,7 @@
   >
     <v-list dense nav>
       <v-list-item class="text-center mb-6">
+        <v-icon color="deep-purple-lighten-3" size="40">mdi-book-open-page-variant</v-icon>
         <div class="text-h6 mt-2 font-weight-bold">CSE Reviewer</div>
       </v-list-item>
 

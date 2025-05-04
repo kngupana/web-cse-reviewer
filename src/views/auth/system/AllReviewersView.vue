@@ -18,7 +18,12 @@ const userId = ref(null)
 // Load reactions and authenticate user when component mounts
 onMounted(async () => {
   // Check if the user is authenticated
-  const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser()
+
   if (userError || !user) {
     console.error('User not authenticated')
     return

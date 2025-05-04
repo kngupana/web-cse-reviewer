@@ -20,7 +20,10 @@ export const useReactionStore = defineStore('reaction', () => {
 
   // Add a reaction (like or dislike) to a reviewer
   async function addReaction(reviewerId, type) {
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser()
     if (userError || !user) {
       console.error('User not authenticated', userError?.message)
       return
@@ -28,7 +31,7 @@ export const useReactionStore = defineStore('reaction', () => {
 
     // Check if the user already has a reaction for this reviewer
     const existingReaction = reactions.value.find(
-      (r) => r.reviewer_id === reviewerId && r.user_id === user.id
+      (r) => r.reviewer_id === reviewerId && r.user_id === user.id,
     )
 
     // If a reaction exists, update it, otherwise add a new one
@@ -58,7 +61,11 @@ export const useReactionStore = defineStore('reaction', () => {
 
   // Remove a reaction from a reviewer
   async function removeReaction(reviewerId) {
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser()
+
     if (userError || !user) {
       console.error('User not authenticated', userError?.message)
       return
@@ -78,7 +85,7 @@ export const useReactionStore = defineStore('reaction', () => {
 
     // Remove the reaction from the local state
     reactions.value = reactions.value.filter(
-      (r) => !(r.reviewer_id === reviewerId && r.user_id === user.id)
+      (r) => !(r.reviewer_id === reviewerId && r.user_id === user.id),
     )
   }
 
