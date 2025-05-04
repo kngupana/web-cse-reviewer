@@ -136,25 +136,12 @@ function deleteReviewerById(id) {
                 {{ reviewer.title }}
               </v-card-title>
 
-              <v-card-subtitle class="text-gray-500 mb-2">
-                Uploaded by: {{ reviewer.uploadedBy }}
-              </v-card-subtitle>
-
               <v-card-actions class="justify-end">
                 <v-btn color="primary" variant="outlined" @click="downloadReviewer(reviewer.file)">
                   View
                 </v-btn>
                 <v-btn color="primary" variant="outlined" @click="downloadReviewer(reviewer.file)">
                   Download
-                </v-btn>
-
-                <v-btn
-                  color="error"
-                  variant="text"
-                  v-if="reviewer.uploadedBy === 'You'"
-                  @click="deleteReviewerById(reviewer.id)"
-                >
-                  Delete
                 </v-btn>
               </v-card-actions>
             </v-card>

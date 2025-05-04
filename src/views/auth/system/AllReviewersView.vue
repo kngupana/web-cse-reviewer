@@ -68,9 +68,8 @@ function dislikeReviewer(reviewerId) {
   }
 }
 
-// Handle download action
-function downloadReviewer(fileName) {
-  alert(`Downloading: ${fileName}`)
+function downloadReviewer(fileUrl) {
+  window.open(fileUrl, '_blank')
 }
 </script>
 
@@ -107,10 +106,6 @@ function downloadReviewer(fileName) {
                 {{ reviewer.title }}
               </v-card-title>
 
-              <v-card-subtitle class="text-sm text-indigo-700 mb-2">
-                Uploaded by <strong>{{ reviewer.uploadedBy }}</strong>
-              </v-card-subtitle>
-
               <v-card-text>
                 <p class="text-gray-600 mb-3">
                   <v-icon size="18" color="indigo">mdi-file-document</v-icon>
@@ -120,7 +115,7 @@ function downloadReviewer(fileName) {
                 <div class="d-flex justify-space-between align-center">
                   <div class="d-flex align-center">
                     <v-btn icon @click="likeReviewer(reviewer.id)">
-                      <v-icon color="green">mdi-thumb-up</v-icon>
+                      <v-icon color="blue">mdi-thumb-up</v-icon>
                     </v-btn>
                     <span class="mr-4 font-medium text-green-700">
                       {{ reactionStore.getReactionCount(reviewer.id, 'like') }}
@@ -134,12 +129,23 @@ function downloadReviewer(fileName) {
                     </span>
                   </div>
 
-                  <v-btn color="indigo" variant="tonal" @click="downloadReviewer(reviewer.file)">
-                    View
-                  </v-btn>
-                  <v-btn color="indigo" variant="tonal" @click="downloadReviewer(reviewer.file)">
-                    Download
-                  </v-btn>
+                  <v-card-actions class="justify-end">
+                    <v-btn
+                      color="primary"
+                      variant="outlined"
+                      @click="downloadReviewer(reviewer.file_path)"
+                    >
+                      View
+                    </v-btn>
+
+                    <v-btn
+                      color="primary"
+                      variant="outlined"
+                      @click="downloadReviewer(reviewer.file_path)"
+                    >
+                      Download
+                    </v-btn>
+                  </v-card-actions>
                 </div>
               </v-card-text>
             </v-card>
