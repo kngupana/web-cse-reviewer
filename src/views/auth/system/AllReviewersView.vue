@@ -167,7 +167,7 @@ function downloadReviewer(fileUrl) {
   box-shadow: 0 8px 16px rgba(30, 58, 138, 0.15);
 }
 .reviewer-container {
-  background: linear-gradient(135deg, #b6a9d6 0%, #cbbce7 100%);
+  background: linear-gradient(135deg, #d4a5f9 0%, #b470e8 100%);
   min-height: 100vh;
   background-attachment: fixed;
   position: relative;
@@ -178,7 +178,7 @@ function downloadReviewer(fileUrl) {
 }
 
 .reviewer-card {
-  background: linear-gradient(to right, #eef2ff, #ffffff);
+  background: linear-gradient(to right, #d4a5f9, #ffffff);
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 .reviewer-card:hover {

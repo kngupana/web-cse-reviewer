@@ -4,8 +4,8 @@ import { onMounted, ref } from 'vue'
 import { useDisplay } from 'vuetify'
 import SideNavigation from '@/components/layout/SideNavigation.vue'
 import ProfileHeader from '@/components/layout/ProfileHeader.vue'
-import UploadReviewerView from '@/views/auth/system/UploadReviewerView.vue'
-import { RouterLink } from 'vue-router'
+//import UploadReviewerView from '@/views/auth/system/UploadReviewerView.vue'
+//import { RouterLink } from 'vue-router'
 
 const props = defineProps(['isWithAppBarNavIcon'])
 const emit = defineEmits(['isDrawerVisible'])
